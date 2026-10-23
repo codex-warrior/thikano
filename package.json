@@ -1,0 +1,33 @@
+{
+  "name": "thikano",
+  "private": true,
+  "version": "0.1.0",
+  "description": "THIKANO — the operating system for PGs & hostels.",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "functions",
+    "firebase-tests",
+    "tools"
+  ],
+  "scripts": {
+    "dev:owner": "npm run dev -w @thikano/owner",
+    "dev:admin": "npm run dev -w @thikano/admin",
+    "dev:web": "npm run dev -w @thikano/web",
+    "dev:mobile": "npm run start -w @thikano/mobile",
+    "build:web-apps": "npm run build -w @thikano/owner -w @thikano/admin -w @thikano/web",
+    "test": "npm run test -w @thikano/domain -w @thikano/fixtures",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "emulators": "npm run build -w @thikano/functions && firebase emulators:start --project demo-thikano",
+    "test:firebase": "npm run build -w @thikano/functions && firebase emulators:exec --only auth,firestore,functions,storage --project demo-thikano \"npm run test -w @thikano/firebase-tests\"",
+    "test:all": "npm test && npm run test:firebase",
+    "seed": "npm run seed -w @thikano/tools"
+  },
+  "overrides": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
