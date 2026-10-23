@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(bash tools/go-live.sh:*)",
+      "Bash(firebase:*)",
+      "Bash(gcloud:*)",
+      "Bash(npx tsx tools/src/bootstrap-admin.ts:*)",
+      "Bash(npx eas-cli:*)"
+    ]
+  }
+}
