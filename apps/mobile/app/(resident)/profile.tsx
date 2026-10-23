@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 import { useResident } from '@/src/resident';
+import { DeleteAccount } from '@/src/delete-account';
 import { useSession } from '@/src/session';
 import { Button, Card, H1, H2, Screen, Small } from '@/src/ui';
 
@@ -19,6 +20,7 @@ export default function ResidentProfile() {
       <View style={{ marginTop: 8 }}>
         <Button label="Sign out" variant="secondary" icon="log-out" onPress={signOut} />
       </View>
+      <DeleteAccount />
     </Screen>
   );
 }

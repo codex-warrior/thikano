@@ -2,6 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onIdTokenChanged, signOut as fbSignOut, type User } from 'firebase/auth';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { firebase } from './firebase';
+import { configureForegroundNotifications, registerForPush } from './push';
+
+configureForegroundNotifications();
 
 /**
  * Mode is DERIVED from the account — never chosen in the UI:
@@ -49,6 +52,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       const p = await firebase().call<unknown, { profile: Profile }>('ensureProfile');
       setProfile(p.profile);
       setMode(token.claims.stay ? 'resident' : 'student');
+      void registerForPush();
     } catch {
       // Offline or function unavailable: fall back to the token alone.
       const token = await u.getIdTokenResult().catch(() => null);

@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { View } from 'react-native';
+import { DeleteAccount } from '@/src/delete-account';
 import { useSession } from '@/src/session';
 import { Body, Button, Card, H1, H2, Screen, Small } from '@/src/ui';
 
@@ -27,6 +28,7 @@ export default function DiscoverProfile() {
           <View style={{ marginTop: 8 }}>
             <Button label="Sign out" variant="secondary" icon="log-out" onPress={signOut} />
           </View>
+          <DeleteAccount />
         </>
       )}
     </Screen>

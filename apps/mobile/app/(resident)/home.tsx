@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -60,9 +61,18 @@ export default function ResidentHomeScreen() {
     setPaying(true);
     setPayMsg(null);
     try {
-      const r = await firebase().call<unknown, { receiptNo: string; mode?: string }>('payRentOnline', { invoiceId: due.id });
-      setPayMsg(`Paid ✓ Receipt ${r.receiptNo}${r.mode === 'test' ? ' (test mode)' : ''}`);
-      await reload();
+      const r = await firebase().call<unknown, { receiptNo?: string; mode?: string; pending?: boolean; checkoutUrl?: string }>('payRentOnline', { invoiceId: due.id });
+      if (r.pending && r.checkoutUrl) {
+        // Razorpay hosted checkout (UPI / cards / netbanking). The webhook confirms the payment.
+        await WebBrowser.openBrowserAsync(r.checkoutUrl);
+        setPayMsg('Checking your payment…');
+        await new Promise((res) => setTimeout(res, 2500));
+        await reload();
+        setPayMsg('If you completed the payment, it will show here in a moment. Pull to refresh.');
+      } else {
+        setPayMsg(`Paid ✓ Receipt ${r.receiptNo}${r.mode === 'test' ? ' (test mode)' : ''}`);
+        await reload();
+      }
     } catch (e) {
       setPayMsg(toFriendly(e));
     } finally {
