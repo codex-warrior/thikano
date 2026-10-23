@@ -12,7 +12,7 @@
     "e2e"
   ],
   "scripts": {
-    "build": "npm run build -w @thikano/${THIKANO_APP:?set THIKANO_APP to web, owner or admin}",
+    "build": "npm run build -w @thikano/${THIKANO_APP:?set THIKANO_APP to web, owner or admin} && node tools/hoist-next-build.mjs",
     "start": "npm run serve -w @thikano/${THIKANO_APP:?set THIKANO_APP to web, owner or admin}",
     "dev:owner": "npm run dev -w @thikano/owner",
     "dev:admin": "npm run dev -w @thikano/admin",

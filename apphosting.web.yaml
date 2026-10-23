@@ -5,14 +5,6 @@ env:
   - variable: THIKANO_APP
     value: web
     availability: [BUILD, RUNTIME]
-  # Monorepo mode for App Hosting's Next.js adapter: run the root build, then read the
-  # standalone output from apps/web/.next/standalone/apps/web.
-  - variable: MONOREPO_COMMAND
-    value: npm
-    availability: [BUILD]
-  - variable: GOOGLE_BUILDABLE
-    value: apps/web
-    availability: [BUILD]
   # Legal pages (apps/web/src/lib/legal.ts) — fill before launch; DRAFT banner shows until then.
   - variable: NEXT_PUBLIC_LEGAL_ENTITY
     value: "[Registered company name]"
