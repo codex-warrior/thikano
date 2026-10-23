@@ -2,7 +2,7 @@
 
 **The operating system for PGs & hostels.** Students discover real rooms, residents live better, and owners fill vacancies and earn more.
 
-Start with [docs/THIKANO-PRODUCT.md](docs/THIKANO-PRODUCT.md), [docs/THIKANO-ARCHITECTURE.md](docs/THIKANO-ARCHITECTURE.md) and [docs/THIKANO-ROADMAP.md](docs/THIKANO-ROADMAP.md) (status and production dependencies).
+Start with [docs/THIKANO-PRODUCT.md](docs/THIKANO-PRODUCT.md), [docs/THIKANO-ARCHITECTURE.md](docs/THIKANO-ARCHITECTURE.md) and [docs/THIKANO-ROADMAP.md](docs/THIKANO-ROADMAP.md). **Going live:** [docs/THIKANO-LAUNCH.md](docs/THIKANO-LAUNCH.md) (checklist, timeline, risks).
 
 ## Layout
 
@@ -45,8 +45,9 @@ Demo accounts (emulator only, password `thikano-dev-123`):
 ## Test
 
 ```bash
-npm test                 # domain + dataset unit tests (71)
-npm run test:firebase    # rules + storage + end-to-end journeys on emulators (51)
+npm test                 # domain, dataset and provider-adapter unit tests (78)
+npm run test:firebase    # rules + storage + end-to-end journeys on emulators (54)
+npm run test:e2e         # browser journeys (Playwright; E2E_CHANNEL=chrome to use local Chrome)
 npm run typecheck
 npm run build:web-apps
 ```
