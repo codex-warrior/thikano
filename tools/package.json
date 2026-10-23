@@ -4,7 +4,8 @@
   "private": true,
   "description": "Developer tooling: emulator seed, admin bootstrap. Never run against production.",
   "scripts": {
-    "seed": "tsx src/seed.ts --local"
+    "seed": "tsx src/seed.ts --local",
+    "bootstrap-admin": "tsx src/bootstrap-admin.ts"
   },
   "dependencies": {
     "@thikano/domain": "*",
