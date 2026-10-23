@@ -2,7 +2,7 @@ node_modules/
 .next/
 .expo/
 dist/
-lib/
+/functions/lib/
 out/
 web-build/
 *.tsbuildinfo
