@@ -1,0 +1,60 @@
+/* THIKANO web theme — mirrors packages/tokens/src/index.ts. Change both together. */
+@theme {
+  --color-navy-950: #070E22;
+  --color-navy-900: #0B1633;
+  --color-navy-800: #122046;
+  --color-navy-700: #1A2D5E;
+  --color-navy-600: #284079;
+  --color-navy-500: #3D5797;
+  --color-navy-300: #93A3C8;
+  --color-navy-200: #C3CDE3;
+  --color-navy-100: #E4E9F3;
+  --color-navy-50: #F1F4F9;
+
+  --color-marigold-600: #B9791A;
+  --color-marigold-500: #D99A2B;
+  --color-marigold-100: #FBF0DA;
+
+  --color-ink-900: #0D1730;
+  --color-ink-700: #2D3850;
+  --color-ink-500: #5A6479;
+  --color-ink-400: #7D8597;
+  --color-ink-300: #A9AFBC;
+
+  --color-canvas: #F6F5F1;
+  --color-surface: #FFFFFF;
+  --color-line: #E4E3DD;
+  --color-line-strong: #D3D2CA;
+
+  --color-ok-600: #1C7A50;
+  --color-ok-100: #E3F3EA;
+  --color-warn-600: #A8650F;
+  --color-warn-100: #FBEFD9;
+  --color-bad-600: #B4321F;
+  --color-bad-100: #FBE5E1;
+  --color-info-600: #26579E;
+  --color-info-100: #E3ECF8;
+
+  --font-display: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 14px;
+  --shadow-card: 0 1px 2px rgb(13 23 48 / 0.04), 0 1px 1px rgb(13 23 48 / 0.03);
+  --shadow-raised: 0 8px 24px -8px rgb(13 23 48 / 0.14), 0 2px 4px rgb(13 23 48 / 0.04);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.015em; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid var(--color-navy-500); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+  }
+}

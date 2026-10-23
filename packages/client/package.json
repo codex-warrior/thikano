@@ -1,0 +1,12 @@
+{
+  "name": "@thikano/client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Firebase client SDK setup shared by web apps and mobile: config, emulators, callables, friendly errors.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": { "firebase": "^13.1.0" },
+  "devDependencies": { "typescript": "~6.0.3" }
+}
