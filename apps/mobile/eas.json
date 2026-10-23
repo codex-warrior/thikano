@@ -22,7 +22,8 @@
         "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyA2PoJZK57ZtoUM9nD_itUEn1j0nd1ecqU",
         "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "thikano-prod.firebaseapp.com",
         "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "thikano-prod.firebasestorage.app",
-        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:780398725785:web:8d1d604624fb75d588c608"
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:780398725785:web:8d1d604624fb75d588c608",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com"
       }
     },
     "production": {
@@ -33,7 +34,8 @@
         "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyA2PoJZK57ZtoUM9nD_itUEn1j0nd1ecqU",
         "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "thikano-prod.firebaseapp.com",
         "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "thikano-prod.firebasestorage.app",
-        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:780398725785:web:8d1d604624fb75d588c608"
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:780398725785:web:8d1d604624fb75d588c608",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com"
       }
     }
   },
