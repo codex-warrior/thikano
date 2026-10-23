@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "demo-thikano"
+    "default": "demo-thikano",
+    "prod": "thikano-prod"
   }
 }

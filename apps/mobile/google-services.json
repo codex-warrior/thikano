@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "780398725785",
+    "project_id": "thikano-prod",
+    "storage_bucket": "thikano-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780398725785:android:85b5cf92a26729ee88c608",
+        "android_client_info": {
+          "package_name": "in.thikano.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQgxHXAcRYFHD1r1rMVs8hFVqhnfW2JoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

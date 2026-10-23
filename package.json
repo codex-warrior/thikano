@@ -23,7 +23,7 @@
     "test:firebase": "npm run build -w @thikano/functions && firebase emulators:exec --only auth,firestore,functions,storage --project demo-thikano \"npm run test -w @thikano/firebase-tests\"",
     "test:all": "npm test && npm run test:firebase",
     "seed": "npm run seed -w @thikano/tools",
-    "test:e2e": "npm run build -w @thikano/functions && firebase emulators:exec --only auth,firestore,functions,storage --project demo-thikano \"npm run seed && npm run test -w @thikano/e2e\""
+    "test:e2e": "npm run build -w @thikano/functions && firebase emulators:exec --only auth,firestore --project demo-thikano --export-on-exit=e2e/.emulator-data \"npm run seed\" && node tools/wait-ports-free.mjs 8080 9099 4400 4500 && firebase emulators:exec --only auth,firestore,functions,storage --project demo-thikano --import=e2e/.emulator-data \"npm run test -w @thikano/e2e\""
   },
   "overrides": {
     "react": "19.3.0",

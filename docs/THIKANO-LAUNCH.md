@@ -2,73 +2,60 @@
 
 _Last updated 2026-10-23._
 
-## Where we are
+## Status
 
-The product is **code-complete for V1** and verified on the Firebase emulators:
+**Code:** V1 complete. Sign-in is Google-first (Owner, Admin and mobile). Phone OTP is optional and needs an SMS provider. Residents link to their app by booking, by verified Gmail (automatically) or by invite code, so **launch no longer depends on SMS/DLT**.
 
-| Check | Result |
+**Verified locally:** 78 unit tests, 54 emulator tests (rules, storage, journeys including Google sign-in, invite codes, payment webhook and account deletion), 4 browser journeys, 12-workspace typecheck, 3 production web builds, the Android bundle and expo-doctor.
+
+**Already set up for real (done by Claude):**
+
+| Item | State |
 |---|---|
-| Unit tests (domain rules, dataset, provider adapters) | 78 passing |
-| Emulator tests (Firestore rules, Storage rules, end-to-end journeys incl. webhook + deletion) | 54 passing |
-| Browser tests in repo (`e2e/`) — owner, student, public SEO, admin | 4 passing |
-| Typecheck (12 workspaces) · production builds (3 web apps) · Android bundle · expo-doctor | all passing |
+| GitHub | Private repo `codex-warrior/thikano`, branch `thikano-v1` pushed |
+| Firebase project | `thikano-prod` (owner `ahamshashvat@gmail.com`), free Spark plan |
+| Apps registered | Web, Android and iOS (`in.thikano.app`). Configs are in `apps/*/apphosting.yaml`, `apps/mobile/eas.json`, `google-services.json` and `GoogleService-Info.plist` |
+| Firestore | Database created in `asia-south1` (Mumbai), **security rules deployed** |
+| Production config | `.firebaserc` alias `prod`, `functions/.env.thikano-prod` (payments off, Google-only sign-in) |
+| Go-live automation | `tools/go-live.sh` does everything after billing in one run |
 
-Launch infrastructure that is ready and waiting for credentials:
+## What only you can do (about 15 minutes in total, plus waiting on others)
 
-- **Phone sign-in:** MSG91 adapter and OTP secrets wiring.
-- **Online rent:** Razorpay Payment Links gateway and a signed, idempotent webhook.
-- **Push:** Android via FCM, iOS via APNs, plus device registration in the app.
-- **Account deletion:** in the app and as a public `/delete-account` page.
-- **Legal pages:** `/privacy`, `/terms`, `/refunds` and `/contact`. They show a DRAFT banner until your details are filled in.
-- **Hosting and builds:** App Hosting configs for the three web apps, EAS build profiles and production app identifiers (`in.thikano.app`).
-- **Tooling:** the first-admin bootstrap script and the CI workflow.
-
-## What you need to do (in this order; start the slow ones first)
-
-| # | Task | Typical lead time | Notes |
+| # | Action | Why I can't | Time |
 |---|---|---|---|
-| 1 | **Register the business entity details** you'll use everywhere: legal name, address, GST if any, support email, grievance officer | — | Needed by Razorpay, DLT, Play and Apple |
-| 2 | **MSG91 + DLT registration** (entity + an OTP SMS template with one variable) | often about a week (telecom DLT approvals) | Slowest item. Ask MSG91 for the exact API endpoint and variable name for your template |
-| 3 | **Razorpay account + KYC activation** | a few working days | They review your website. The legal pages need to be filled in and live first |
-| 4 | **Google Play developer account** | 1–2 days to open | New *personal* accounts must run a closed test (currently 12 testers for 14 days) before going public. An *organization* account avoids this but needs a D-U-N-S number |
-| 5 | **Apple Developer Program** (organization) | days to 2 weeks (D-U-N-S) | Needed for iOS and the APNs key |
-| 6 | **Firebase project on Blaze**, billing alerts, region `asia-south1` | same day | Send me the project ID and web app config |
-| 7 | **Domains**: thikano.in, owner.thikano.in, admin.thikano.in | hours | DNS records come from App Hosting |
-| 8 | **Lawyer review** of privacy, terms and refunds | about a week | Templates describe exactly what the app does |
-| 9 | **Dwarpar API docs + key** | unknown | Optional for launch; the catalog adapter works meanwhile |
-| 10 | **Pilot PG(s)** willing to onboard first | — | Strongly recommended before opening to everyone |
+| 1 | **Firebase console → Authentication → Get started**, then enable **Google** and **Email/Password** | Firebase Auth can only be initialized from the console; it also creates the Google OAuth client | 2 min |
+| 2 | **Attach billing** (Blaze) to `thikano-prod` when you're ready, then tell me | Commits your money; you chose to wait | 2 min |
+| 3 | **GitHub → Settings → Billing**: fix the failed payment / Actions spending limit (or tell me to make the repo public) | CI jobs are refused by GitHub until then | 2 min |
+| 4 | `eas login` once (or give me an `EXPO_TOKEN`) | Expo account credentials | 2 min |
+| 5 | Business details for the legal pages, then a lawyer's review | Legal facts about your company | — |
+| 6 | Domains: thikano.in (+ owner., admin.) | Purchase in your name | — |
+| 7 | Later: Razorpay KYC (online rent), Play/Apple developer accounts | KYC and identity verification | days |
 
-## What I do when credentials arrive (about 1–2 working days)
+## What I do the moment you finish 1–2
 
-1. Point `.firebaserc` and the `apphosting.yaml` files at the real project. Deploy rules, indexes and functions (`firebase deploy`).
-2. Set secrets: `firebase functions:secrets:set OTP_HMAC_SECRET MSG91_AUTH_KEY RAZORPAY_KEY_ID RAZORPAY_KEY_SECRET RAZORPAY_WEBHOOK_SECRET APNS_KEY`. Copy `functions/.env.example` to `functions/.env.<project-id>`.
-3. Grant the functions service account permission to sign custom tokens (`iam.serviceAccounts.signBlob`), which OTP sign-in needs.
-4. Create the three App Hosting backends (root directories `apps/web`, `apps/owner` and `apps/admin`, region `asia-southeast1`). Connect the domains.
-5. Register the Razorpay webhook `https://asia-south1-<project>.cloudfunctions.net/razorpayWebhook` for `payment_link.paid`, then make a ₹1 live test payment.
-6. Confirm the MSG91 endpoint and variable with a real OTP to your phone.
-7. Bootstrap your admin account: `npx tsx tools/src/bootstrap-admin.ts --project <id> --email <you> --yes`.
-8. Build Android and iOS with EAS. Test on real phones: OTP, push, payment, deep links. Then submit.
-9. Onboard the pilot PG: create the property and rooms, verify it, list rooms and share links.
+1. Read the Google Web client ID from the Auth config and put it into `eas.json`.
+2. `bash tools/go-live.sh thikano-prod <billing-account> --yes`. This enables the services, creates the Storage bucket, sets secrets, deploys indexes, TTL, Storage rules and all functions, grants signBlob, and adds a ₹2,000/month budget alert.
+3. Create the three App Hosting backends (asia-southeast1) and connect the domains. This needs one GitHub-connect click in the console.
+4. Bootstrap your admin account (`tools/src/bootstrap-admin.ts`) and smoke-test every journey on production.
+5. Android: an EAS preview build (APK) for the pilot PG. Add its SHA-1 to Firebase for Google sign-in.
 
-## Timeline (honest estimate)
+## Timeline
 
 | Milestone | When |
 |---|---|
-| Web live (public pages, Owner, Admin) with real OTP + payments | about **1–1.5 weeks** after you start items 2–3 (bounded by DLT and Razorpay KYC) |
-| Android public on Play | about **3 weeks** with a new personal account (closed-test rule), about 1 week with an organization account |
-| iOS on the App Store | about **1–2 weeks** after Apple enrollment completes (review is usually 1–3 days) |
-| Pilot running with real residents | the week the web apps go live, using the Android test build |
+| Web live (public site, Owner, Admin) with Google sign-in; rent recorded by owners (cash/UPI) | **1–2 days** after steps 1–2 |
+| Pilot PG using the Android app (preview APK, no store needed) | **same week** |
+| Online rent payments | when Razorpay activation completes (usually a few working days after you apply) |
+| Play Store public | about 3 weeks with a new personal account (closed-test rule), about 1 week with an organization account |
+| App Store | 1–2 weeks after Apple enrollment |
 
-These are typical third-party lead times, not guarantees. Engineering is not the bottleneck.
+## Residual risks
 
-## Residual risks I could not verify here
-
-| Risk | Why | Mitigation |
-|---|---|---|
-| MSG91 endpoint and payload | MSG91's API docs couldn't be fetched (client-rendered) | Configurable `MSG91_FLOW_URL` / `MSG91_OTP_VAR`, adapter unit-tested, live test at step 6 |
-| App Hosting + npm workspaces build | Not covered in Firebase docs; first deploy will tell | Fallback: Cloud Run with Next standalone output (about half a day) |
-| Push on real devices | Needs a development build plus credentials; only token registration logic is tested | Real-device test at step 8 |
-| Mobile UI on real phones | Verified on react-native-web and the Android bundle, not on hardware | Pilot with a preview APK before the store submission |
-| CI on GitHub | Workflow written; repo has no remote yet | First push runs it; fix any Linux-only issues |
-| App Check | Mobile attestation needs native modules; enforcement is off (rate limits are on) | Enable after moving mobile to React Native Firebase, or for web-only callables |
-| Scale | Tested on emulator data (5 properties, 509 beds) | Indexes declared; run a load test before onboarding many PGs |
+| Risk | Mitigation |
+|---|---|
+| App Hosting + npm workspaces build is untested | First deploy tells us; fallback is Cloud Run with Next standalone output (about half a day) |
+| Google sign-in, push and payments on real phones are untested | Covered in the production smoke test and the pilot APK |
+| CI has never run on GitHub (account billing) | Runs once item 3 is fixed; all suites pass locally |
+| MSG91 API details are unverified | Only matters if you turn phone OTP on; configurable and unit-tested |
+| An emulator glitch once (`RESOURCE_EXHAUSTED`) | Did not reproduce; watch CI |
+| Scale beyond the pilot | Indexes declared; run a load test before onboarding many PGs |
