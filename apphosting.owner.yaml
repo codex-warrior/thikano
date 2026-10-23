@@ -1,4 +1,7 @@
 # App Hosting overrides for the owner backend (environment name: owner); see apphosting.yaml.
-scripts:
-  buildCommand: npm run build -w @thikano/owner
-  runCommand: npm run serve -w @thikano/owner
+# The root package.json build/start scripts pick the app from THIKANO_APP (custom App Hosting
+# build/run commands rewrite package.json and lose the npm workspaces).
+env:
+  - variable: THIKANO_APP
+    value: owner
+    availability: [BUILD, RUNTIME]

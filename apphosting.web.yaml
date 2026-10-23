@@ -1,8 +1,10 @@
 # App Hosting overrides for the web backend (environment name: web); see apphosting.yaml.
-scripts:
-  buildCommand: npm run build -w @thikano/web
-  runCommand: npm run serve -w @thikano/web
+# The root package.json build/start scripts pick the app from THIKANO_APP (custom App Hosting
+# build/run commands rewrite package.json and lose the npm workspaces).
 env:
+  - variable: THIKANO_APP
+    value: web
+    availability: [BUILD, RUNTIME]
   # Legal pages (apps/web/src/lib/legal.ts) — fill before launch; DRAFT banner shows until then.
   - variable: NEXT_PUBLIC_LEGAL_ENTITY
     value: "[Registered company name]"
