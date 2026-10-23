@@ -22,7 +22,14 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-4 py-10">
         <Logo tone="light" />
         <p className="mt-3 max-w-md text-[14px]">The operating system for PGs & hostels. Find your PG. See the actual room. Move in. Live better.</p>
-        <p className="mt-8 text-[12px] text-navy-300">© {2026} THIKANO. Room details are published by property owners and verified by THIKANO.</p>
+        <nav className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px]" aria-label="Legal">
+          <Link href="/privacy" className="hover:text-white">Privacy</Link>
+          <Link href="/terms" className="hover:text-white">Terms</Link>
+          <Link href="/refunds" className="hover:text-white">Refunds</Link>
+          <Link href="/contact" className="hover:text-white">Contact</Link>
+          <Link href="/delete-account" className="hover:text-white">Delete account</Link>
+        </nav>
+        <p className="mt-6 text-[12px] text-navy-300">© {new Date().getFullYear()} THIKANO. Room details are published by property owners and verified by THIKANO.</p>
       </div>
     </footer>
   );

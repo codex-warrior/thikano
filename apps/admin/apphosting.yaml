@@ -1,0 +1,31 @@
+# Firebase App Hosting backend for apps/admin (root directory: apps/admin).
+# Region: asia-southeast1 (Singapore) — App Hosting does not offer asia-south1; functions stay in Mumbai.
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+env:
+  - variable: THIKANO_ENV
+    value: production
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: REPLACE_WITH_PROJECT_ID
+    availability: [BUILD, RUNTIME]
+  - variable: GCLOUD_PROJECT
+    value: REPLACE_WITH_PROJECT_ID
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: REPLACE_WITH_WEB_API_KEY
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: REPLACE_WITH_PROJECT_ID.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: REPLACE_WITH_BUCKET
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: REPLACE_WITH_WEB_APP_ID
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_PUBLIC_WEB_URL
+    value: https://thikano.in
+    availability: [BUILD, RUNTIME]
