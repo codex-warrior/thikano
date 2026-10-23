@@ -5,3 +5,11 @@ env:
   - variable: THIKANO_APP
     value: admin
     availability: [BUILD, RUNTIME]
+  # Monorepo mode for App Hosting's Next.js adapter: run the root build, then read the
+  # standalone output from apps/admin/.next/standalone/apps/admin.
+  - variable: MONOREPO_COMMAND
+    value: npm
+    availability: [BUILD]
+  - variable: GOOGLE_BUILDABLE
+    value: apps/admin
+    availability: [BUILD]
