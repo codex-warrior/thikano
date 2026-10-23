@@ -1,0 +1,3 @@
+@import "tailwindcss";
+@import "@thikano/web-ui/theme.css";
+@source "../../../../packages/web-ui/src";

@@ -1,0 +1,33 @@
+{
+  "name": "@thikano/owner",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@thikano/domain": "*",
+    "@thikano/web-ui": "*",
+    "lucide-react": "^1.61.0",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "@thikano/server": "*",
+    "@thikano/client": "*",
+    "firebase": "^13.1.0",
+    "firebase-admin": "^14.5.0",
+    "@thikano/tokens": "*"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "~19.3.0",
+    "@types/react-dom": "~19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3"
+  }
+}
