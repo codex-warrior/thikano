@@ -12,7 +12,20 @@
           "package_name": "in.thikano.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "780398725785-4o7d0u26va17aggle7tgtq8vanfupogf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.thikano.app",
+            "certificate_hash": "c327a4d285af0f03ec233642e7b63883c2c84ce0"
+          }
+        },
+        {
+          "client_id": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCQgxHXAcRYFHD1r1rMVs8hFVqhnfW2JoE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "780398725785-rvc6t7tn64ffoggv61br35qscsm6ic5n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.thikano.app"
+              }
+            }
+          ]
         }
       }
     }

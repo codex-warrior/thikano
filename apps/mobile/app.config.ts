@@ -16,5 +16,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...(config.plugins ?? []),
     ...(process.env.GOOGLE_IOS_URL_SCHEME ? [['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.GOOGLE_IOS_URL_SCHEME }] as [string, object]] : []),
   ],
-  extra: { ...config.extra, eas: { projectId: process.env.EAS_PROJECT_ID } },
+  owner: 'ahamrohitsingh',
+  extra: { ...config.extra, eas: { projectId: process.env.EAS_PROJECT_ID ?? 'c1e532ca-89ae-4f4d-a8fa-ddeada11e6c9' } },
 });
