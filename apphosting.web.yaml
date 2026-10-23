@@ -1,0 +1,27 @@
+# App Hosting overrides for the web backend (environment name: web); see apphosting.yaml.
+scripts:
+  buildCommand: npm run build -w @thikano/web
+  runCommand: npm run serve -w @thikano/web
+env:
+  # Legal pages (apps/web/src/lib/legal.ts) — fill before launch; DRAFT banner shows until then.
+  - variable: NEXT_PUBLIC_LEGAL_ENTITY
+    value: "[Registered company name]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_LEGAL_ADDRESS
+    value: "[Registered office address]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_SUPPORT_EMAIL
+    value: "[support@thikano.in]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_SUPPORT_PHONE
+    value: "[Support phone]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_GRIEVANCE_OFFICER
+    value: "[Grievance Officer name]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_GRIEVANCE_EMAIL
+    value: "[grievance@thikano.in]"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_LEGAL_EFFECTIVE_DATE
+    value: "[Effective date]"
+    availability: [BUILD, RUNTIME]

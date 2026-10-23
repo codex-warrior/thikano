@@ -1,0 +1,4 @@
+# App Hosting overrides for the admin backend (environment name: admin); see apphosting.yaml.
+scripts:
+  buildCommand: npm run build -w @thikano/admin
+  runCommand: npm run serve -w @thikano/admin

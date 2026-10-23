@@ -1,0 +1,4 @@
+# App Hosting overrides for the owner backend (environment name: owner); see apphosting.yaml.
+scripts:
+  buildCommand: npm run build -w @thikano/owner
+  runCommand: npm run serve -w @thikano/owner
