@@ -1,0 +1,45 @@
+rules_version = '2';
+
+// THIKANO Storage rules. Media is served to the public through tokenized download
+// URLs stored in Firestore projections; direct reads stay private to the org.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function memberPath(org) { return /databases/(default)/documents/organizations/$(org)/members/$(request.auth.uid); }
+    function hasMember(org) { return signedIn() && firestore.exists(memberPath(org)); }
+    function member(org) { return firestore.get(memberPath(org)).data; }
+    function isMember(org) { return hasMember(org) && member(org).status == 'active'; }
+    function isOwner(org) { return isMember(org) && member(org).role == 'owner'; }
+    function canWriteInventory(org, prop) {
+      return isMember(org) && memberCan(member(org), prop);
+    }
+    function memberCan(m, prop) {
+      return (m.propertyIds == null || prop in m.propertyIds)
+        && (m.role in ['owner', 'manager'] || 'inventory.write' in m.get('permissions', []));
+    }
+    function isImage(maxMb) { return request.resource.contentType.matches('image/(jpeg|png|webp|heic)') && request.resource.size < maxMb * 1024 * 1024; }
+    function isVideo(maxMb) { return request.resource.contentType.matches('video/(mp4|quicktime|webm)') && request.resource.size < maxMb * 1024 * 1024; }
+
+    // Room / property photos & walkthrough videos: orgs/{org}/properties/{prop}/media/{assetId}
+    match /orgs/{org}/properties/{prop}/media/{file} {
+      allow read: if isMember(org) || (signedIn() && request.auth.token.get('platformRole', null) != null);
+      allow create, update: if canWriteInventory(org, prop) && (isImage(10) || isVideo(60));
+      allow delete: if canWriteInventory(org, prop);
+    }
+
+    // Property verification documents — owner + platform staff only.
+    match /orgs/{org}/verification/{file=**} {
+      allow read: if isOwner(org) || (signedIn() && request.auth.token.get('platformRole', null) != null);
+      allow write: if isOwner(org)
+        && (request.resource == null || request.resource.contentType.matches('(image/.*|application/pdf)') && request.resource.size < 15 * 1024 * 1024);
+    }
+
+    // Maintenance photos — residents of that org.
+    match /orgs/{org}/maintenance/{issueId}/{file} {
+      allow read: if isMember(org) || (signedIn() && request.auth.token.get('stay', null) != null && request.auth.token.stay.o == org);
+      allow write: if signedIn() && request.auth.token.get('stay', null) != null && request.auth.token.stay.o == org && isImage(8);
+    }
+
+    match /{all=**} { allow read, write: if false; }
+  }
+}

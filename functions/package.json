@@ -1,0 +1,24 @@
+{
+  "name": "@thikano/functions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "THIKANO Cloud Functions. Bundled with esbuild so @thikano/domain ships inside lib/.",
+  "main": "lib/index.js",
+  "engines": { "node": "22" },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0",
+    "firebase-functions": "^7.4.0"
+  },
+  "devDependencies": {
+    "@thikano/domain": "*",
+    "@types/node": "^24.19.2",
+    "esbuild": "^0.28.2",
+    "typescript": "~6.0.3",
+    "vitest": "^4.0.0"
+  }
+}

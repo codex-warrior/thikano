@@ -1,0 +1,235 @@
+rules_version = '2';
+
+// THIKANO Firestore security rules.
+// Model: docs/THIKANO-SECURITY.md · Permission matrix mirrors packages/domain/src/permissions.ts.
+// Invariant fields (bed status, room inventory/stats, listings, money, leads, residents)
+// are written ONLY by Cloud Functions (Admin SDK bypasses these rules).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ───────────── identity helpers ─────────────
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function claim(name) { return signedIn() ? request.auth.token.get(name, null) : null; }
+    function isPlatformAdmin() { return claim('platformRole') == 'platform_admin'; }
+    function isPlatformStaff() { return claim('platformRole') in ['platform_admin', 'platform_support']; }
+
+    function memberPath(org) { return /databases/$(database)/documents/organizations/$(org)/members/$(me()); }
+    function isMember(org) {
+      return signedIn() && exists(memberPath(org)) && get(memberPath(org)).data.status == 'active';
+    }
+    function memberDoc(org) { return get(memberPath(org)).data; }
+    function inScope(m, prop) { return m.propertyIds == null || prop in m.propertyIds; }
+    // can(): owner/manager hold every permission; staff only explicit grants. Always property-scoped.
+    function can(org, perm, prop) { return isMember(org) && memberCan(memberDoc(org), perm, prop); }
+    function memberCan(m, perm, prop) {
+      return inScope(m, prop) && (m.role in ['owner', 'manager'] || perm in m.get('permissions', []));
+    }
+    function isOrgOwner(org) { return isMember(org) && memberDoc(org).role == 'owner'; }
+
+    // Resident stay claim: { o: orgId, p: propertyId, r: residentId } set by the move-in function.
+    function stay() { return claim('stay'); }
+    function residesAt(org, prop) { return stay() != null && stay().o == org && stay().p == prop; }
+
+    // ───────────── validation helpers ─────────────
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function onlyChanges(keys) { return changed().hasOnly(keys); }
+    function isMoney(v) { return v is int && v >= 0 && v <= 100000000; } // ≤ ₹10L in paise
+    function auditedCreate() {
+      return request.resource.data.createdBy == me()
+        && request.resource.data.createdAt is int
+        && request.resource.data.updatedAt is int;
+    }
+
+    // ───────────── users ─────────────
+    match /users/{uid} {
+      allow read: if signedIn() && (me() == uid || isPlatformStaff());
+      allow create: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['uid', 'displayName', 'phone', 'email', 'photoUrl', 'createdAt'])
+        && request.resource.data.uid == uid;
+      // activeStay / disabled / roles are server-managed.
+      allow update: if signedIn() && me() == uid && onlyChanges(['displayName', 'photoUrl', 'updatedAt']);
+      allow delete: if false;
+
+      match /devices/{deviceId} {
+        allow read, write: if signedIn() && me() == uid;
+      }
+      match /inbox/{itemId} {
+        allow read: if signedIn() && me() == uid;
+        allow update: if signedIn() && me() == uid && onlyChanges(['readAt']);
+      }
+    }
+
+    // ───────────── organizations (tenant root) ─────────────
+    match /organizations/{org} {
+      allow read: if isMember(org) || isPlatformStaff();
+      allow create, delete: if false; // createOrganization callable
+      allow update: if isOrgOwner(org) && onlyChanges(['name', 'updatedAt']);
+
+      match /members/{memberUid} {
+        allow read: if (signedIn() && me() == memberUid) || isMember(org) || isPlatformStaff();
+        allow write: if false; // inviteMember / updateMember callables (owner-only)
+      }
+
+      // ── inventory: Property → Building → Floor → Room → Bed (flat under property) ──
+      match /properties/{prop} {
+        allow read: if can(org, 'inventory.read', prop) || isPlatformStaff();
+        allow create: if isMember(org) && memberDoc(org).role in ['owner', 'manager'] && memberDoc(org).propertyIds == null
+          && request.resource.data.orgId == org
+          && request.resource.data.id == prop
+          && request.resource.data.verification == 'draft'
+          && !('slug' in request.resource.data)
+          && auditedCreate();
+        // verification + slug are server-managed (submitForVerification / admin review / slug trigger).
+        allow update: if can(org, 'inventory.write', prop)
+          && !changed().hasAny(['verification', 'slug', 'orgId', 'id', 'createdBy', 'createdAt']);
+        allow delete: if false;
+
+        match /buildings/{id} {
+          allow read: if can(org, 'inventory.read', prop) || isPlatformStaff();
+          allow create, update: if can(org, 'inventory.write', prop)
+            && request.resource.data.orgId == org && request.resource.data.propertyId == prop;
+          allow delete: if can(org, 'inventory.write', prop);
+        }
+        match /floors/{id} {
+          allow read: if can(org, 'inventory.read', prop) || isPlatformStaff();
+          allow create, update: if can(org, 'inventory.write', prop)
+            && request.resource.data.orgId == org && request.resource.data.propertyId == prop;
+          allow delete: if can(org, 'inventory.write', prop);
+        }
+        match /rooms/{room} {
+          allow read: if can(org, 'inventory.read', prop) || isPlatformStaff();
+          allow create: if can(org, 'inventory.write', prop)
+            && request.resource.data.orgId == org
+            && request.resource.data.propertyId == prop
+            && request.resource.data.id == room
+            && request.resource.data.listingIntent == 'unlisted'
+            && isMoney(request.resource.data.rent) && isMoney(request.resource.data.deposit)
+            && !request.resource.data.keys().hasAny(['inventory', 'stats', 'publicSlug'])
+            && auditedCreate();
+          // listingIntent changes go through setRoomListing (audited).
+          allow update: if can(org, 'inventory.write', prop)
+            && !changed().hasAny(['inventory', 'stats', 'publicSlug', 'listingIntent', 'adminSuspended', 'orgId', 'propertyId', 'id', 'createdBy', 'createdAt'])
+            && (!changed().hasAny(['rent']) || isMoney(request.resource.data.rent))
+            && (!changed().hasAny(['deposit']) || isMoney(request.resource.data.deposit));
+          allow delete: if false; // archive via listingIntent
+        }
+        match /beds/{bed} {
+          allow read: if can(org, 'inventory.read', prop) || isPlatformStaff();
+          // Clients may only create/toggle non-occupancy states. occupied/reserved come from
+          // the move-in / booking callables so availability can never be faked.
+          allow create: if can(org, 'inventory.write', prop)
+            && request.resource.data.orgId == org && request.resource.data.propertyId == prop
+            && request.resource.data.status in ['available', 'blocked', 'maintenance']
+            && request.resource.data.get('residentId', null) == null
+            && auditedCreate();
+          allow update: if can(org, 'inventory.write', prop)
+            && resource.data.status in ['available', 'blocked', 'maintenance']
+            && request.resource.data.status in ['available', 'blocked', 'maintenance']
+            && onlyChanges(['status', 'label', 'rentOverride', 'updatedAt']);
+          allow delete: if can(org, 'inventory.write', prop) && resource.data.status == 'available';
+        }
+      }
+
+      // ── operations ──
+      match /residents/{id} {
+        allow read: if can(org, 'residents.read', resource.data.propertyId)
+          || (signedIn() && resource.data.uid == me())
+          || isPlatformStaff();
+        allow write: if false; // move-in / transfer / move-out callables
+      }
+      match /invoices/{id} {
+        allow read: if can(org, 'rent.read', resource.data.propertyId)
+          || (signedIn() && resource.data.residentUid == me())
+          || isPlatformStaff();
+        allow write: if false;
+      }
+      match /payments/{id} {
+        allow read: if can(org, 'rent.read', resource.data.propertyId)
+          || (signedIn() && resource.data.residentUid == me())
+          || isPlatformStaff();
+        allow write: if false; // recordPayment callable / gateway webhook
+      }
+      match /maintenance/{id} {
+        allow read: if can(org, 'maintenance.read', resource.data.propertyId)
+          || (signedIn() && resource.data.get('residentUid', null) == me())
+          || isPlatformStaff();
+        allow create: if false; // raiseIssue callable fills property/room/bed from the stay
+        allow update: if can(org, 'maintenance.write', resource.data.propertyId)
+          && onlyChanges(['status', 'assigneeUid', 'resolvedAt', 'updatedAt']);
+        allow delete: if false;
+      }
+      match /notices/{id} {
+        allow read: if can(org, 'inventory.read', resource.data.propertyId)
+          || (residesAt(org, resource.data.propertyId) && resource.data.publishedAt != null);
+        allow create: if can(org, 'notices.write', request.resource.data.propertyId)
+          && request.resource.data.orgId == org && auditedCreate();
+        allow update: if can(org, 'notices.write', resource.data.propertyId)
+          && request.resource.data.propertyId == resource.data.propertyId;
+        allow delete: if can(org, 'notices.write', resource.data.propertyId);
+      }
+      match /parcels/{id} {
+        allow read: if can(org, 'residents.read', resource.data.propertyId)
+          || (signedIn() && resource.data.residentUid == me());
+        allow create: if can(org, 'residents.write', request.resource.data.propertyId) && request.resource.data.orgId == org;
+        allow update: if can(org, 'residents.write', resource.data.propertyId) && onlyChanges(['collectedAt', 'updatedAt']);
+      }
+      match /leads/{id} {
+        allow read: if can(org, 'leads.read', resource.data.propertyId) || isPlatformStaff();
+        allow create: if false; // createLead callable (public, App Check, rate-limited)
+        allow update: if can(org, 'leads.write', resource.data.propertyId) && onlyChanges(['status', 'updatedAt', 'note']);
+      }
+      match /bookings/{id} {
+        allow read: if can(org, 'leads.read', resource.data.propertyId)
+          || (signedIn() && resource.data.get('studentUid', null) == me())
+          || isPlatformStaff();
+        allow write: if false; // advanceBooking callable (state machine)
+      }
+      match /serviceOrders/{id} {
+        allow read: if can(org, 'earnings.read', resource.data.propertyId)
+          || (signedIn() && resource.data.residentUid == me())
+          || isPlatformStaff();
+        allow write: if false;
+      }
+      match /ledger/{id} {
+        allow read: if can(org, 'earnings.read', resource.data.propertyId) || isPlatformAdmin();
+        allow write: if false;
+      }
+    }
+
+    // ───────────── public projections (whitelisted, function-written) ─────────────
+    match /publicProperties/{id} { allow read: if true; allow write: if false; }
+    match /publicRooms/{id} { allow read: if true; allow write: if false; }
+    match /slugs/{slug} { allow read: if true; allow write: if false; }
+
+    // ───────────── platform ─────────────
+    match /verificationRequests/{propertyId} {
+      allow read: if isPlatformStaff() || isOrgOwner(resource.data.orgId);
+      allow write: if false;
+    }
+    match /providers/{id} { allow read: if signedIn(); allow write: if false; }
+    match /revenueRules/{id} { allow read: if isPlatformAdmin(); allow write: if false; }
+    match /platformLedger/{id} { allow read: if isPlatformAdmin(); allow write: if false; }
+    match /auditLogs/{id} { allow read: if isPlatformStaff(); allow write: if false; }
+    match /searchEvents/{id} { allow read: if isPlatformAdmin(); allow write: if false; }
+    match /analyticsDaily/{id} { allow read: if isPlatformStaff(); allow write: if false; }
+    match /reviews/{id} { allow read: if isPlatformStaff(); allow write: if false; }
+    match /disputes/{id} { allow read: if isPlatformStaff(); allow write: if false; }
+    match /supportTickets/{id} {
+      allow read: if isPlatformStaff() || (signedIn() && resource.data.requesterUid == me());
+      allow write: if false;
+    }
+    match /platformStaff/{id} { allow read, write: if false; }
+    match /ratings/{id} { allow read: if true; allow write: if false; }
+    match /rateLimits/{id} { allow read, write: if false; }
+    match /otpChallenges/{id} { allow read, write: if false; }
+
+    // Admin collection-group queries across tenants.
+    match /{path=**}/leads/{id} { allow read: if isPlatformStaff(); }
+    match /{path=**}/bookings/{id} { allow read: if isPlatformStaff(); }
+    match /{path=**}/residents/{id} { allow read: if isPlatformStaff(); }
+    match /{path=**}/properties/{id} { allow read: if isPlatformStaff(); }
+    match /{path=**}/rooms/{id} { allow read: if isPlatformStaff(); }
+  }
+}
