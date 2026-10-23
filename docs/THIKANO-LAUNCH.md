@@ -8,36 +8,35 @@ _Last updated 2026-10-23._
 
 **Verified locally:** 78 unit tests, 54 emulator tests (rules, storage, journeys including Google sign-in, invite codes, payment webhook and account deletion), 4 browser journeys, 12-workspace typecheck, 3 production web builds, the Android bundle and expo-doctor.
 
-**Already set up for real (done by Claude):**
+**Live on `thikano-prod` (verified 2026-10-24):**
 
 | Item | State |
 |---|---|
-| GitHub | Private repo `codex-warrior/thikano`, branch `thikano-v1` pushed |
-| Firebase project | `thikano-prod` (owner `ahamshashvat@gmail.com`), free Spark plan |
-| Apps registered | Web, Android and iOS (`in.thikano.app`). Configs are in `apps/*/apphosting.yaml`, `apps/mobile/eas.json`, `google-services.json` and `GoogleService-Info.plist` |
-| Firestore | Database created in `asia-south1` (Mumbai), **security rules deployed** |
-| Production config | `.firebaserc` alias `prod`, `functions/.env.thikano-prod` (payments off, Google-only sign-in) |
-| Go-live automation | `tools/go-live.sh` does everything after billing in one run |
+| Public site | https://web--thikano-prod.asia-southeast1.hosted.app (home, sitemap, room/PG pages, legal pages) |
+| Owner console | https://owner--thikano-prod.asia-southeast1.hosted.app (Google sign-in, session cookie → onboarding) |
+| Admin | https://admin--thikano-prod.asia-southeast1.hosted.app (platform admin: ahamshashvat@gmail.com) |
+| Backend | 51 Cloud Functions in asia-south1 (40 callables, 8 Firestore triggers, Razorpay webhook, 2 schedules) |
+| Data | Firestore rules + indexes, Storage bucket + rules, TTL policies |
+| Auth | Google + Email/Password; hosted.app domains authorized |
+| Cost guard | Budget alert ₹2,000/month at 50/90/100% |
+| Off until configured | Online rent (`PAYMENTS_MODE=off`), phone OTP (`SMS_PROVIDER=none`), iOS push |
 
-## What only you can do (about 15 minutes in total, plus waiting on others)
+**Deploying again:** `bash tools/go-live.sh thikano-prod <billing-account> --yes` (backend) and
+`firebase deploy --project thikano-prod --only apphosting` (web apps). App Hosting builds from the repo
+root: each backend's environment name (web|owner|admin) selects `apphosting.<name>.yaml`, which sets
+`THIKANO_APP`; `tools/hoist-next-build.mjs` moves the build into the layout App Hosting's Next.js
+adapter expects.
 
-| # | Action | Why I can't | Time |
-|---|---|---|---|
-| 1 | **Firebase console → Authentication → Get started**, then enable **Google** and **Email/Password** | Firebase Auth can only be initialized from the console; it also creates the Google OAuth client | 2 min |
-| 2 | **Attach billing** (Blaze) to `thikano-prod` when you're ready, then tell me | Commits your money; you chose to wait | 2 min |
-| 3 | **GitHub → Settings → Billing**: fix the failed payment / Actions spending limit (or tell me to make the repo public) | CI jobs are refused by GitHub until then | 2 min |
-| 4 | `eas login` once (or give me an `EXPO_TOKEN`) | Expo account credentials | 2 min |
-| 5 | Business details for the legal pages, then a lawyer's review | Legal facts about your company | — |
-| 6 | Domains: thikano.in (+ owner., admin.) | Purchase in your name | — |
-| 7 | Later: Razorpay KYC (online rent), Play/Apple developer accounts | KYC and identity verification | days |
+## Still to do
 
-## What I do the moment you finish 1–2
-
-1. Read the Google Web client ID from the Auth config and put it into `eas.json`.
-2. `bash tools/go-live.sh thikano-prod <billing-account> --yes`. This enables the services, creates the Storage bucket, sets secrets, deploys indexes, TTL, Storage rules and all functions, grants signBlob, and adds a ₹2,000/month budget alert.
-3. Create the three App Hosting backends (asia-southeast1) and connect the domains. This needs one GitHub-connect click in the console.
-4. Bootstrap your admin account (`tools/src/bootstrap-admin.ts`) and smoke-test every journey on production.
-5. Android: an EAS preview build (APK) for the pilot PG. Add its SHA-1 to Firebase for Google sign-in.
+| # | Who | Action |
+|---|---|---|
+| 1 | You | Sign in to Admin and Owner with Google once to confirm (Admin: ahamshashvat@gmail.com) |
+| 2 | You | `npx eas-cli login` once, then Claude builds the Android APK and registers its SHA-1 |
+| 3 | You | Business details for the legal pages (DRAFT banner shows until then), then a lawyer's review |
+| 4 | You | Buy thikano.in; Claude connects it (owner./admin. subdomains) and switches the public URL |
+| 5 | You | Razorpay KYC → Claude sets secrets and `PAYMENTS_MODE=razorpay` |
+| 6 | You | Play Console / Apple developer accounts for store releases |
 
 ## Timeline
 
