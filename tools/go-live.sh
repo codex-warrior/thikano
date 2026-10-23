@@ -24,7 +24,7 @@ gcloud services enable --project "$PROJECT" \
   cloudfunctions.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com run.googleapis.com \
   eventarc.googleapis.com pubsub.googleapis.com cloudscheduler.googleapis.com secretmanager.googleapis.com \
   firebasestorage.googleapis.com storage.googleapis.com iamcredentials.googleapis.com identitytoolkit.googleapis.com \
-  fcm.googleapis.com firebaseapphosting.googleapis.com billingbudgets.googleapis.com
+  fcm.googleapis.com firebaseapphosting.googleapis.com billingbudgets.googleapis.com compute.googleapis.com
 
 step "Creating the default Storage bucket (asia-south1) if missing"
 TOKEN=$(gcloud auth print-access-token)
