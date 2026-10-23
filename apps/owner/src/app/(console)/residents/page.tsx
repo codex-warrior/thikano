@@ -3,6 +3,7 @@ import { Users } from 'lucide-react';
 import { can, formatINR } from '@thikano/domain';
 import { Avatar, buttonClass, Card, EmptyState, StatusPill } from '@thikano/web-ui';
 import { getResidents, getRooms } from '@thikano/server/owner';
+import { InviteChip } from '@/components/invite';
 import { ResidentActions } from '@/components/resident-actions';
 import { requireProperty } from '@/lib/session';
 
@@ -85,7 +86,14 @@ export default async function ResidentsPage({ searchParams }: { searchParams: Pr
                     {r.status === 'notice' ? (
                       <StatusPill tone="warn">Leaving {r.moveOutDate ? new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(r.moveOutDate) : 'soon'}</StatusPill>
                     ) : (
-                      <StatusPill tone={r.uid ? 'ok' : 'neutral'}>{r.uid ? 'Active' : 'App not linked'}</StatusPill>
+                      r.uid ? (
+                        <StatusPill tone="ok">Active</StatusPill>
+                      ) : (
+                        <div className="space-y-1">
+                          <StatusPill tone="neutral">App not linked</StatusPill>
+                          {canWrite ? <InviteChip orgId={session.orgId} residentId={r.id} name={r.name} propertyName={property.name} code={(r as typeof r & { inviteCode?: string | null }).inviteCode ?? null} /> : null}
+                        </div>
+                      )
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">{canWrite ? <ResidentActions orgId={session.orgId} residentId={r.id} name={r.name} status={r.status} freeBeds={freeBeds} /> : null}</td>

@@ -16,14 +16,15 @@ import {
   type Resident,
   type Room,
 } from '@thikano/domain';
-import { auth, db, FieldValue, isEmulator, paths } from './lib/admin';
+import { db, FieldValue, isEmulator, paths } from './lib/admin';
 import { bump } from './lib/analytics';
 import { audit } from './lib/audit';
 import { requireAuth, requirePermission, roleLabel, type Caller } from './lib/authz';
 import { badInput, fail, notFound } from './lib/errors';
 import { notifyOrg, notifyUsers } from './lib/notify';
+import { findExistingUid, hasActiveStay, issueInvite, setStayClaim } from './lib/stay';
 import { rateLimit } from './lib/rate-limit';
-import { id, indianPhone, int, obj, oneOf, optInt, optStr, str } from './lib/validate';
+import { id, indianPhone, int, obj, oneOf, optEmail, optInt, optStr, str } from './lib/validate';
 
 const DAY = 86_400_000;
 
@@ -256,24 +257,6 @@ export const advanceBooking = onCall(async (req) => {
 
 // ───────────────────────── Move-in / residents ─────────────────────────
 
-async function uidForPhone(phone: string, name: string): Promise<string> {
-  try {
-    return (await auth.getUserByPhoneNumber(phone)).uid;
-  } catch (e) {
-    if ((e as { code?: string }).code !== 'auth/user-not-found') throw e;
-    return (await auth.createUser({ phoneNumber: phone, displayName: name })).uid;
-  }
-}
-
-/** Set the resident stay claim (mobile switches to Resident mode) — merges with other claims. */
-async function setStayClaim(uid: string, stay: { o: string; p: string; r: string } | null) {
-  const user = await auth.getUser(uid);
-  const claims = { ...(user.customClaims ?? {}) } as Record<string, unknown>;
-  if (stay) claims.stay = stay;
-  else delete claims.stay;
-  await auth.setCustomUserClaims(uid, claims);
-}
-
 interface ActivateInput {
   caller: Caller;
   orgId: string;
@@ -281,6 +264,7 @@ interface ActivateInput {
   bedId: string;
   name: string;
   phone: string;
+  email: string | null;
   rent: number | null;
   deposit: number | null;
   moveInDate: number;
@@ -295,9 +279,12 @@ interface ActivateInput {
  */
 async function activateResident(i: ActivateInput) {
   const member = await requirePermission(i.caller, i.orgId, 'residents.write', i.propertyId);
-  const uid = await uidForPhone(i.phone, i.name);
-  const existingStay = await db.collectionGroup('residents').where('uid', '==', uid).where('status', 'in', ['active', 'notice']).limit(1).get();
-  if (!existingStay.empty) fail('failed-precondition', 'This person already has an active stay on THIKANO.');
+  // Link to an EXISTING account only (booking student, verified email, or phone account).
+  let uid = await findExistingUid({ studentUid: i.booking?.booking.studentUid ?? null, email: i.email, phone: i.phone });
+  if (uid && (await hasActiveStay(uid))) {
+    if (i.booking?.booking.studentUid === uid) fail('failed-precondition', 'This student already has an active stay on THIKANO.');
+    uid = null; // matched someone else's account by phone/email — fall back to an invite code
+  }
 
   const resRef = db.collection(paths.orgCol(i.orgId, 'residents')).doc();
   const bedRef = db.doc(paths.bed(i.orgId, i.propertyId, i.bedId));
@@ -317,8 +304,8 @@ async function activateResident(i: ActivateInput) {
     const t = Date.now();
     const rent = i.rent ?? bed.rentOverride ?? room.rent;
     const deposit = i.deposit ?? room.deposit;
-    const resident: Resident & { residentUid: string } = {
-      id: resRef.id, orgId: i.orgId, propertyId: i.propertyId, roomId: bed.roomId, bedId: bed.id, uid, residentUid: uid, name: i.name, phone: i.phone,
+    const resident: Resident & { residentUid: string | null; email: string | null } = {
+      id: resRef.id, orgId: i.orgId, propertyId: i.propertyId, roomId: bed.roomId, bedId: bed.id, uid, residentUid: uid, name: i.name, phone: i.phone, email: i.email,
       status: 'active', moveInDate: i.moveInDate, moveOutDate: null, rent, deposit, rentDueDay: i.rentDueDay, createdAt: t, updatedAt: t, createdBy: i.caller.uid,
     };
     tx.set(resRef, resident);
@@ -339,14 +326,18 @@ async function activateResident(i: ActivateInput) {
       if (bookingFresh.leadId) tx.update(db.doc(`${paths.orgCol(i.orgId, 'leads')}/${bookingFresh.leadId}`), { status: 'converted', updatedAt: t });
       tx.update(roomRef, { 'stats.bookings': FieldValue.increment(1) });
     }
-    tx.set(db.doc(`users/${uid}`), { uid, displayName: i.name, phone: i.phone, activeStay: { orgId: i.orgId, propertyId: i.propertyId, residentId: resRef.id } }, { merge: true });
+    if (uid) tx.set(db.doc(`users/${uid}`), { uid, activeStay: { orgId: i.orgId, propertyId: i.propertyId, residentId: resRef.id } }, { merge: true });
     await audit({ actorUid: i.caller.uid, actorRole: roleLabel(i.caller, member), action: 'resident.assigned_to_bed', entity: 'resident', entityId: resRef.id, orgId: i.orgId, metadata: { bedId: i.bedId, roomId: bed.roomId, bookingId: bookingFresh?.id ?? null } }, tx);
     return { residentId: resRef.id, roomNumber: room.number, rent };
   });
 
-  await setStayClaim(uid, { o: i.orgId, p: i.propertyId, r: result.residentId });
-  await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set in Room ${result.roomNumber}. Rent ${formatINR(result.rent)}/month.`, link: 'thikano://home' });
-  return { residentId: result.residentId, uid };
+  if (uid) {
+    await setStayClaim(uid, { o: i.orgId, p: i.propertyId, r: result.residentId });
+    await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set in Room ${result.roomNumber}. Rent ${formatINR(result.rent)}/month.`, link: 'thikano://home' });
+    return { residentId: result.residentId, uid, inviteCode: null };
+  }
+  const inviteCode = await issueInvite(i.orgId, i.propertyId, result.residentId);
+  return { residentId: result.residentId, uid: null, inviteCode };
 }
 
 /** Move-in from an approved + booked application. */
@@ -361,7 +352,7 @@ export const moveIn = onCall(async (req) => {
   const phone = d.phone ? indianPhone(d) : lead?.phone;
   if (!phone) badInput("Please add the student's mobile number.");
   return activateResident({
-    caller, orgId, propertyId: b.booking.propertyId, bedId: b.booking.bedId!, name: b.booking.studentName, phone: phone!,
+    caller, orgId, propertyId: b.booking.propertyId, bedId: b.booking.bedId!, name: b.booking.studentName, phone: phone!, email: optEmail(d),
     rent: b.booking.rent, deposit: b.booking.deposit, moveInDate: optInt(d, 'moveInDate') ?? b.booking.moveInDate ?? Date.now(),
     rentDueDay: optInt(d, 'rentDueDay', { min: 1, max: 28 }) ?? 5, booking: b,
   });
@@ -372,7 +363,7 @@ export const addResident = onCall(async (req) => {
   const caller = requireAuth(req);
   const d = obj(req.data);
   return activateResident({
-    caller, orgId: id(d, 'orgId'), propertyId: id(d, 'propertyId'), bedId: id(d, 'bedId'), name: str(d, 'name', { min: 2, max: 60 }), phone: indianPhone(d),
+    caller, orgId: id(d, 'orgId'), propertyId: id(d, 'propertyId'), bedId: id(d, 'bedId'), name: str(d, 'name', { min: 2, max: 60 }), phone: indianPhone(d), email: optEmail(d),
     rent: optInt(d, 'rent', { min: 0, max: 10_000_000 }), deposit: optInt(d, 'deposit', { min: 0, max: 10_000_000 }),
     moveInDate: optInt(d, 'moveInDate') ?? Date.now(), rentDueDay: optInt(d, 'rentDueDay', { min: 1, max: 28 }) ?? 5,
   });
@@ -418,6 +409,8 @@ export const completeMoveOut = onCall(async (req) => {
     }
     tx.update(resRef, { status: 'moved_out', moveOutDate: res.moveOutDate ?? t, updatedAt: t });
     if (res.uid) tx.set(db.doc(`users/${res.uid}`), { activeStay: null }, { merge: true });
+    const code = (res as Resident & { inviteCode?: string | null }).inviteCode;
+    if (code) tx.delete(db.doc(`residentInvites/${code}`));
     await audit({ actorUid: caller.uid, actorRole: roleLabel(caller, member), action: 'resident.moved_out', entity: 'resident', entityId: residentId, orgId, metadata: { bedId: res.bedId } }, tx);
   });
   if (res.uid) await setStayClaim(res.uid, null);

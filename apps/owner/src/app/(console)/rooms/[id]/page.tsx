@@ -76,6 +76,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
               occupants={occupants}
               canWrite={can(m, 'inventory.write', property.id)}
               canAssign={can(m, 'residents.write', property.id)}
+              propertyName={property.name}
             />
           </div>
         </Card>

@@ -71,7 +71,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
               <a href={`tel:${lead.phone}`} className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line-strong px-3 text-[13px] font-semibold text-navy-700 hover:bg-navy-50">
                 <Phone size={14} /> Call
               </a>
-              <LeadActions orgId={session.orgId} lead={lead} booking={booking} freeBeds={lead.roomId ? freeBeds.get(lead.roomId) ?? [] : []} canWrite={canWrite} canMoveIn={canMoveIn} />
+              <LeadActions orgId={session.orgId} lead={lead} booking={booking} freeBeds={lead.roomId ? freeBeds.get(lead.roomId) ?? [] : []} canWrite={canWrite} canMoveIn={canMoveIn} propertyName={property.name} />
             </div>
           ))}
         </Card>

@@ -9,3 +9,4 @@ export { generateInvoicesNow, monthlyInvoices, onMaintenanceUpdated, onNoticeWri
 export { getPartnerEarnings, getServiceCatalog, onServiceOrderWritten, placeServiceOrder, updateServiceOrderStatus, upsertRevenueRule } from './services';
 export { getPropertyInsights, reviewProperty, setPropertySuspended, setRoomSuspended } from './platform';
 export { getResidentHome } from './resident';
+export { claimResidentInvite, refreshResidentInvite } from './residents';

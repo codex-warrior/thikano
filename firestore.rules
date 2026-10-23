@@ -223,6 +223,7 @@ service cloud.firestore {
     }
     match /platformStaff/{id} { allow read, write: if false; }
     match /webhookEvents/{id} { allow read, write: if false; }
+    match /residentInvites/{code} { allow read, write: if false; }
     match /ratings/{id} { allow read: if true; allow write: if false; }
     match /rateLimits/{id} { allow read, write: if false; }
     match /otpChallenges/{id} { allow read, write: if false; }

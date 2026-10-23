@@ -9,6 +9,7 @@ import { Button } from '@thikano/web-ui';
 import { useAction } from '@/lib/use-action';
 import { useMutation } from '@/lib/use-mutation';
 import { Dialog, Field, FormError, MoneyField, rupeesToPaise } from './form';
+import { InvitePanel } from './invite';
 
 const LABEL: Record<BedStatus, string> = { available: 'Available', occupied: 'Occupied', reserved: 'Reserved', blocked: 'Blocked', maintenance: 'Maintenance' };
 
@@ -23,10 +24,11 @@ interface Props {
   occupants: Record<string, { name: string; status: string } | null>;
   canWrite: boolean;
   canAssign: boolean;
+  propertyName: string;
 }
 
 /** Bed-level control. Occupied/reserved only change via move-in / booking functions. */
-export function BedManager({ orgId, propertyId, roomId, uid, rent, deposit, beds, occupants, canWrite, canAssign }: Props) {
+export function BedManager({ orgId, propertyId, roomId, uid, rent, deposit, beds, occupants, canWrite, canAssign, propertyName }: Props) {
   const [assigning, setAssigning] = useState<Bed | null>(null);
   const base = `organizations/${orgId}/properties/${propertyId}/beds`;
   const setStatus = useMutation(async (fb, bed: Bed, status: BedStatus) => updateDoc(doc(fb.db, `${base}/${bed.id}`), { status, updatedAt: Date.now() }));
@@ -95,7 +97,7 @@ export function BedManager({ orgId, propertyId, roomId, uid, rent, deposit, beds
         </button>
       ) : null}
       <FormError error={error} />
-      {assigning ? <AssignDialog orgId={orgId} propertyId={propertyId} bed={assigning} rent={assigning.rentOverride ?? rent} deposit={deposit} onClose={() => setAssigning(null)} /> : null}
+      {assigning ? <AssignDialog orgId={orgId} propertyId={propertyId} propertyName={propertyName} bed={assigning} rent={assigning.rentOverride ?? rent} deposit={deposit} onClose={() => setAssigning(null)} /> : null}
     </div>
   );
 }
@@ -109,8 +111,23 @@ function IconBtn({ label, onClick, children, danger }: { label: string; onClick:
 }
 
 /** Direct move-in (walk-in / existing resident). Creates the THIKANO account by phone. */
-function AssignDialog({ orgId, propertyId, bed, rent, deposit, onClose }: { orgId: string; propertyId: string; bed: Bed; rent: number; deposit: number; onClose: () => void }) {
-  const { run, busy, error, setError } = useAction<Record<string, unknown>, { residentId: string }>('addResident');
+function AssignDialog({ orgId, propertyId, propertyName, bed, rent, deposit, onClose }: { orgId: string; propertyId: string; propertyName: string; bed: Bed; rent: number; deposit: number; onClose: () => void }) {
+  const { run, busy, error, setError } = useAction<Record<string, unknown>, { residentId: string; uid: string | null; inviteCode: string | null }>('addResident');
+  const [done, setDone] = useState<{ name: string; inviteCode: string | null } | null>(null);
+  if (done) {
+    return (
+      <Dialog title={`Bed ${bed.label} assigned ✓`} onClose={onClose}>
+        {done.inviteCode ? (
+          <InvitePanel name={done.name} propertyName={propertyName} code={done.inviteCode} />
+        ) : (
+          <p className="text-[14px] text-ink-700">{done.name}&apos;s THIKANO app is linked — they&apos;ll see their stay right away.</p>
+        )}
+        <Button className="mt-4 w-full" variant="secondary" onClick={onClose}>
+          Done
+        </Button>
+      </Dialog>
+    );
+  }
   const today = new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
   return (
     <Dialog title={`Assign Bed ${bed.label}`} onClose={onClose}>
@@ -123,12 +140,13 @@ function AssignDialog({ orgId, propertyId, bed, rent, deposit, onClose }: { orgI
           const depositP = rupeesToPaise(f.get('deposit'));
           if (!Number.isFinite(rentP) || !Number.isFinite(depositP)) return setError('Please check the rent and deposit.');
           const moveIn = new Date(`${f.get('moveIn')}T00:00:00+05:30`).getTime();
-          const r = await run({ orgId, propertyId, bedId: bed.id, name: f.get('name'), phone: f.get('phone'), rent: rentP, deposit: depositP, moveInDate: moveIn, rentDueDay: Number(f.get('dueDay')) });
-          if (r) onClose();
+          const r = await run({ orgId, propertyId, bedId: bed.id, name: f.get('name'), phone: f.get('phone'), email: f.get('email') || null, rent: rentP, deposit: depositP, moveInDate: moveIn, rentDueDay: Number(f.get('dueDay')) });
+          if (r) setDone({ name: String(f.get('name')), inviteCode: r.inviteCode });
         }}
       >
         <Field label="Resident name" name="name" required minLength={2} autoComplete="off" />
-        <Field label="Mobile number" name="phone" type="tel" required placeholder="98XXXXXXXX" hint="They sign in to THIKANO with this number." />
+        <Field label="Mobile number" name="phone" type="tel" required placeholder="98XXXXXXXX" />
+        <Field label="Gmail address (optional)" name="email" type="email" placeholder="name@gmail.com" hint="Links their THIKANO app automatically when they sign in with Google." />
         <div className="grid grid-cols-2 gap-3">
           <MoneyField label="Monthly rent" name="rent" defaultValue={rent / 100} />
           <MoneyField label="Deposit" name="deposit" defaultValue={deposit / 100} />

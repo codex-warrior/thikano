@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onIdTokenChanged, signOut as fbSignOut, type User } from 'firebase/auth';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { firebase } from './firebase';
+import { signOutGoogle } from './google';
 import { configureForegroundNotifications, registerForPush } from './push';
 
 configureForegroundNotifications();
@@ -48,8 +49,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const token = await u.getIdTokenResult(force);
+      let token = await u.getIdTokenResult(force);
       const p = await firebase().call<unknown, { profile: Profile }>('ensureProfile');
+      // A stay may have just been linked (verified-email auto-link) — pick up the new claim.
+      if (p.profile.activeStay && !token.claims.stay) token = await u.getIdTokenResult(true);
       setProfile(p.profile);
       setMode(token.claims.stay ? 'resident' : 'student');
       void registerForPush();
@@ -82,6 +85,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       },
       refresh: () => resolve(firebase().auth.currentUser, true),
       signOut: async () => {
+        await signOutGoogle();
         await fbSignOut(firebase().auth);
       },
     }),

@@ -7,6 +7,7 @@ import { Button } from '@thikano/web-ui';
 import { useAction } from '@/lib/use-action';
 import { useMutation } from '@/lib/use-mutation';
 import { Dialog, Field, FormError, Select } from './form';
+import { InvitePanel } from './invite';
 
 interface Props {
   orgId: string;
@@ -15,15 +16,17 @@ interface Props {
   freeBeds: { id: string; label: string }[];
   canWrite: boolean;
   canMoveIn: boolean;
+  propertyName: string;
 }
 
 /** Next step for a lead, driven by the booking state machine (functions enforce it). */
-export function LeadActions({ orgId, lead, booking, freeBeds, canWrite, canMoveIn }: Props) {
+export function LeadActions({ orgId, lead, booking, freeBeds, canWrite, canMoveIn, propertyName }: Props) {
   const [dialog, setDialog] = useState<null | 'visit' | 'book' | 'movein'>(null);
   const setLeadStatus = useMutation(async (fb, status: string) => updateDoc(doc(fb.db, `organizations/${orgId}/leads/${lead.id}`), { status, updatedAt: Date.now() }));
   const start = useAction<{ orgId: string; leadId: string }>('startApplication');
   const advance = useAction<Record<string, unknown>>('advanceBooking');
-  const moveIn = useAction<Record<string, unknown>>('moveIn');
+  const moveIn = useAction<Record<string, unknown>, { inviteCode: string | null }>('moveIn');
+  const [invite, setInvite] = useState<string | null | undefined>(undefined);
   const error = setLeadStatus.error ?? start.error ?? advance.error ?? moveIn.error;
   if (!canWrite) return null;
   const go = (to: string, extra: Record<string, unknown> = {}) => advance.run({ orgId, bookingId: booking!.id, to, ...extra });
@@ -169,22 +172,28 @@ export function LeadActions({ orgId, lead, booking, freeBeds, canWrite, canMoveI
           </form>
         </Dialog>
       ) : null}
-      {dialog === 'movein' ? (
+      {dialog === 'movein' && invite !== undefined ? (
+        <Dialog title={`${lead.name} moved in ✓`} onClose={() => (setDialog(null), setInvite(undefined))}>
+          {invite ? <InvitePanel name={lead.name} propertyName={propertyName} code={invite} /> : <p className="text-[14px] text-ink-700">Their THIKANO app is linked and now in Resident mode.</p>}
+        </Dialog>
+      ) : null}
+      {dialog === 'movein' && invite === undefined ? (
         <Dialog title={`Move in ${lead.name}`} onClose={() => setDialog(null)}>
           <form
             className="space-y-3"
             onSubmit={async (e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
-              const r = await moveIn.run({ orgId, bookingId: booking!.id, moveInDate: new Date(`${f.get('date')}T00:00:00+05:30`).getTime(), rentDueDay: Number(f.get('dueDay')) });
-              if (r) setDialog(null);
+              const r = await moveIn.run({ orgId, bookingId: booking!.id, moveInDate: new Date(`${f.get('date')}T00:00:00+05:30`).getTime(), rentDueDay: Number(f.get('dueDay')), email: f.get('email') || null });
+              if (r) setInvite(r.inviteCode);
             }}
           >
             <div className="grid grid-cols-2 gap-3">
               <Field label="Move-in date" name="date" type="date" required defaultValue={new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10)} />
               <Field label="Rent due day" name="dueDay" type="number" min={1} max={28} defaultValue={5} />
             </div>
-            <p className="text-[12.5px] text-ink-500">Creates the resident, issues the first (pro-rated) invoice, and switches {lead.name}&apos;s THIKANO app to Resident mode.</p>
+            <Field label="Gmail address (optional)" name="email" type="email" placeholder="name@gmail.com" />
+            <p className="text-[12.5px] text-ink-500">Creates the resident and the first (pro-rated) invoice. If {lead.name} enquired from the app or you add their Gmail, their app switches to Resident mode automatically.</p>
             <FormError error={moveIn.error} />
             <Button type="submit" variant="success" className="w-full" disabled={moveIn.busy}>
               {moveIn.busy ? 'Moving in…' : 'Confirm move-in'}

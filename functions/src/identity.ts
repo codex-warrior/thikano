@@ -7,6 +7,7 @@ import { getMember, requireAuth, requireOwner, requirePlatformAdmin } from './li
 import { badInput, fail, notFound } from './lib/errors';
 import { rateLimit } from './lib/rate-limit';
 import { OTP_SECRETS, smsProvider } from './lib/sms';
+import { autoLinkByEmail } from './residents';
 import { id, indianPhone, obj, oneOf, optStr, str, strArray } from './lib/validate';
 
 const STAFF_PERMISSIONS: readonly StaffPermission[] = [
@@ -36,6 +37,11 @@ export const ensureProfile = onCall(async (req) => {
       createdAt: Date.now(),
     };
     await ref.set(profile);
+  }
+  // Google sign-in: a stay waiting for this verified email is linked automatically.
+  if (!caller.stay && !profile.activeStay) {
+    const verified = (req.auth!.token as { email_verified?: boolean }).email_verified === true;
+    if (await autoLinkByEmail(caller.uid, caller.email, verified)) profile = (await ref.get()).data() as UserProfile;
   }
   const memberships = await db.collectionGroup('members').where('uid', '==', caller.uid).where('status', '==', 'active').get();
   return {

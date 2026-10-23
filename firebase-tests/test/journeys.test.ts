@@ -8,7 +8,7 @@ import { initializeApp as initAdmin, getApps as getAdminApps } from 'firebase-ad
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 import { getFirestore as getAdminDb } from 'firebase-admin/firestore';
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
-import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, signInWithCustomToken, type Auth } from 'firebase/auth';
+import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithCredential, signInWithCustomToken, type Auth } from 'firebase/auth';
 import { collection, connectFirestoreEmulator, doc, getDoc, getDocs, getFirestore, query, setDoc, where, type Firestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions, httpsCallable, type Functions } from 'firebase/functions';
 import { createHmac } from 'node:crypto';
@@ -43,6 +43,12 @@ function client(name: string): Client {
   connectFunctionsEmulator(fns, '127.0.0.1', 5001);
   const call = async <T,>(fn: string, data: unknown = {}) => (await httpsCallable(fns, fn)(data)).data as T;
   return { app, auth, db, fns, call };
+}
+
+/** Google sign-in against the Auth emulator (it accepts unsigned ID-token claims). */
+async function googleSignIn(c: Client, email: string) {
+  const cred = GoogleAuthProvider.credential(JSON.stringify({ sub: `g-${email}`, email, email_verified: true, name: email.split('@')[0] }));
+  return signInWithCredential(c.auth, cred);
 }
 
 async function waitFor<T>(fn: () => Promise<T | null | undefined | false>, label: string, timeoutMs = 25_000): Promise<T> {
@@ -220,18 +226,25 @@ describe('Journey 3 — Move-in: application → approval → booking → reside
     await expectCallError(pub.call('moveIn', { orgId, bookingId }), 'unauthenticated');
   });
 
-  it('move-in activates the resident, issues rent, and switches the app to Resident mode', async () => {
-    const r = await owner.call<{ residentId: string; uid: string }>('moveIn', { orgId, bookingId, rentDueDay: 5 });
-    const token = await adminAuth.createCustomToken(r.uid);
-    await signInWithCustomToken(student.auth, token);
+  it('move-in creates the resident; the student links the app with the invite code after Google sign-in', async () => {
+    const r = await owner.call<{ residentId: string; uid: string | null; inviteCode: string | null }>('moveIn', { orgId, bookingId, rentDueDay: 5 });
+    // The enquiry came from a public link without sign-in, so no account exists yet → invite code.
+    expect(r.uid).toBeNull();
+    expect(r.inviteCode).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
+    await googleSignIn(student, `aarav-${uniq}@gmail.com`);
+    await student.call('ensureProfile');
+    await expectCallError(student.call('claimResidentInvite', { code: 'WRONGCODE' }), 'not-found');
+    await student.call('claimResidentInvite', { code: r.inviteCode!.toLowerCase() });
     const claims = (await student.auth.currentUser!.getIdTokenResult(true)).claims;
     expect(claims.stay).toEqual({ o: orgId, p: propertyId, r: r.residentId });
+    const uid = student.auth.currentUser!.uid;
+    await expectCallError(pub.call('claimResidentInvite', { code: r.inviteCode }), 'unauthenticated');
 
     const profile = await student.call<{ profile: { activeStay: unknown } }>('ensureProfile');
     expect(profile.profile.activeStay).toEqual({ orgId, propertyId, residentId: r.residentId });
     const me = (await getDoc(doc(student.db, `organizations/${orgId}/residents/${r.residentId}`))).data();
     expect(me).toMatchObject({ roomId, bedId: `${roomId}-B`, status: 'active', rent: 950000 });
-    const invoices = await getDocs(query(collection(student.db, `organizations/${orgId}/invoices`), where('residentUid', '==', r.uid)));
+    const invoices = await getDocs(query(collection(student.db, `organizations/${orgId}/invoices`), where('residentUid', '==', uid)));
     expect(invoices.size).toBe(1);
     const booking = (await getDoc(doc(owner.db, `organizations/${orgId}/bookings/${bookingId}`))).data();
     expect(booking?.stage).toBe('moved_in');
@@ -239,7 +252,14 @@ describe('Journey 3 — Move-in: application → approval → booking → reside
   });
 
   it('filling the last bed makes the room fully occupied and unsearchable — automatically', async () => {
-    await owner.call('addResident', { orgId, propertyId, bedId: `${roomId}-A`, name: 'Kabir Shekhawat', phone: WALKIN_PHONE });
+    const kabir = await owner.call<{ uid: string | null; inviteCode: string | null }>('addResident', { orgId, propertyId, bedId: `${roomId}-A`, name: 'Kabir Shekhawat', phone: WALKIN_PHONE, email: `kabir-${uniq}@gmail.com` });
+    expect(kabir.inviteCode).toBeTruthy(); // no account yet
+    // Kabir signs in with the Gmail the owner entered → linked automatically, no code needed.
+    const kabirApp = client('kabir');
+    await googleSignIn(kabirApp, `kabir-${uniq}@gmail.com`);
+    const prof = await kabirApp.call<{ profile: { activeStay: { residentId: string } | null } }>('ensureProfile');
+    expect(prof.profile.activeStay).toBeTruthy();
+    expect((await kabirApp.auth.currentUser!.getIdTokenResult(true)).claims.stay).toBeTruthy();
     const pr = await waitFor(async () => {
       const d = (await getDoc(doc(pub.db, `publicRooms/${roomId}`))).data();
       return d?.availableBeds === 0 ? d : null;
