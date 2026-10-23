@@ -11,6 +11,7 @@ import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
 import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, signInWithCustomToken, type Auth } from 'firebase/auth';
 import { collection, connectFirestoreEmulator, doc, getDoc, getDocs, getFirestore, query, setDoc, where, type Firestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions, httpsCallable, type Functions } from 'firebase/functions';
+import { createHmac } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const PROJECT = 'demo-thikano';
@@ -359,5 +360,63 @@ describe('Journey 6 — Owner insights', () => {
     const ins = await owner.call<{ vacantBeds: number; demand: { studentsSearchingNearby: number } }>('getPropertyInsights', { orgId, propertyId });
     expect(ins.vacantBeds).toBe(1); // the bed freed by move-out in Journey 4b
     expect(ins.demand.studentsSearchingNearby).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('Journey 7 — Launch readiness: payment webhook, push devices, account deletion', () => {
+  const WEBHOOK = `http://127.0.0.1:5001/${PROJECT}/${REGION}/razorpayWebhook`;
+  const SECRET = 'emulator-razorpay-webhook-secret';
+  const post = (body: object, opts: { secret?: string; eventId?: string } = {}) => {
+    const raw = JSON.stringify(body);
+    const sig = createHmac('sha256', opts.secret ?? SECRET).update(raw).digest('hex');
+    return fetch(WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json', 'x-razorpay-signature': sig, ...(opts.eventId ? { 'x-razorpay-event-id': opts.eventId } : {}) }, body: raw });
+  };
+
+  it('a signed payment_link.paid webhook settles the pending payment exactly once', async () => {
+    const res = (await adminDb.collection(`organizations/${orgId}/residents`).where('bedId', '==', `${roomId}-A`).get()).docs[0]!.data();
+    const inv = (await adminDb.collection(`organizations/${orgId}/invoices`).where('residentId', '==', res.id).get()).docs[0]!;
+    const due = inv.get('amount') + inv.get('lateFee') - inv.get('paid');
+    const payRef = adminDb.collection(`organizations/${orgId}/payments`).doc();
+    await payRef.set({ id: payRef.id, orgId, propertyId, residentId: res.id, residentUid: res.uid, invoiceId: inv.id, amount: due, method: 'gateway', gatewayRef: `plink_${uniq}`, gateway: 'razorpay', mode: 'live', status: 'pending', receiptNo: null, createdAt: Date.now(), updatedAt: Date.now(), createdBy: res.uid });
+    const evt = { event: 'payment_link.paid', payload: { payment_link: { entity: { id: `plink_${uniq}`, reference_id: payRef.id, amount_paid: due, status: 'paid' } }, payment: { entity: { id: `pay_${uniq}` } } } };
+
+    expect((await post(evt, { secret: 'wrong-secret' })).status).toBe(400);
+    expect((await post(evt, { eventId: `evt_${uniq}` })).status).toBe(200);
+    expect(await (await post(evt, { eventId: `evt_${uniq}` })).text()).toBe('duplicate');
+    expect((await post(evt, { eventId: `evt2_${uniq}` })).status).toBe(200); // different delivery, same link: idempotent settle
+
+    const after = (await inv.ref.get()).data()!;
+    expect(after.paid).toBe(inv.get('paid') + due);
+    expect(after.status).toBe('paid');
+    const pay = (await payRef.get()).data()!;
+    expect(pay).toMatchObject({ status: 'succeeded', gatewayPaymentId: `pay_${uniq}` });
+    expect(pay.receiptNo).toMatch(/^TK-/);
+  });
+
+  it('devices can only be registered through the validated function', async () => {
+    const otpUser = client('device');
+    await signInWithCustomToken(otpUser.auth, await adminAuth.createCustomToken(`dev-${uniq}`));
+    await expect(setDoc(doc(otpUser.db, `users/dev-${uniq}/devices/x`), { platform: 'android', token: 'abc' })).rejects.toThrow();
+    await otpUser.call('registerDevice', { platform: 'android', token: `fcm-token-${uniq}-0123456789abcdef`, installId: `inst${uniq}` });
+    const saved = (await getDoc(doc(otpUser.db, `users/dev-${uniq}/devices/inst${uniq}`))).data();
+    expect(saved).toMatchObject({ platform: 'android' });
+    await expectCallError(otpUser.call('registerDevice', { platform: 'windows', token: 'x'.repeat(30), installId: 'abcdefgh' }), 'invalid-argument');
+  });
+
+  it('account deletion: students can delete; active residents and owners are blocked', async () => {
+    const res = (await adminDb.collection(`organizations/${orgId}/residents`).where('bedId', '==', `${roomId}-A`).get()).docs[0]!.data();
+    const resident = client('del-res');
+    await signInWithCustomToken(resident.auth, await adminAuth.createCustomToken(res.uid));
+    await expectCallError(resident.call('deleteAccount', { confirm: 'DELETE' }), 'failed-precondition');
+    await expectCallError(owner.call('deleteAccount', { confirm: 'DELETE' }), 'failed-precondition');
+
+    const s = client('del-student');
+    const uid = `del-${uniq}`;
+    await signInWithCustomToken(s.auth, await adminAuth.createCustomToken(uid));
+    await s.call('ensureProfile');
+    await expectCallError(s.call('deleteAccount', {}), 'invalid-argument');
+    await s.call('deleteAccount', { confirm: 'DELETE' });
+    await expect(adminAuth.getUser(uid)).rejects.toMatchObject({ code: 'auth/user-not-found' });
+    expect((await adminDb.doc(`users/${uid}`).get()).exists).toBe(false);
   });
 });

@@ -25,7 +25,7 @@ import { audit } from './lib/audit';
 import { requireAuth, requirePermission, roleLabel, type Caller } from './lib/authz';
 import { badInput, notAllowed, notFound } from './lib/errors';
 import { notifyOrg, notifyUsers } from './lib/notify';
-import { paymentGateway } from './lib/payments';
+import { PAYMENT_SECRETS, paymentGateway } from './lib/payments';
 import { id, int, obj, oneOf, optStr, str } from './lib/validate';
 
 type Invoice = RentInvoice & { residentUid: string | null; status: string };
@@ -108,12 +108,20 @@ export const refreshInvoices = onSchedule({ schedule: '0 7 * * *', timeZone: 'As
   }
 });
 
-async function settle(caller: Caller | { uid: string; system: true }, orgId: string, invoiceId: string, amount: number, method: Payment['method'], gatewayRef: string | null, mode: 'test' | 'live' | 'manual') {
+/**
+ * Applies a payment to an invoice atomically. With `pendingPaymentId` (gateway webhook) the
+ * existing pending payment is completed, and repeated webhooks are no-ops.
+ */
+export async function settle(caller: Caller | { uid: string; system: true }, orgId: string, invoiceId: string, amount: number, method: Payment['method'], gatewayRef: string | null, mode: 'test' | 'live' | 'manual', pendingPaymentId?: string) {
   const invRef = db.doc(`${paths.orgCol(orgId, 'invoices')}/${invoiceId}`);
-  const payRef = db.collection(paths.orgCol(orgId, 'payments')).doc();
+  const payRef = pendingPaymentId ? db.doc(`${paths.orgCol(orgId, 'payments')}/${pendingPaymentId}`) : db.collection(paths.orgCol(orgId, 'payments')).doc();
   return db.runTransaction(async (tx) => {
     const inv = (await tx.get(invRef)).data() as Invoice | undefined;
     if (!inv) return notFound('invoice');
+    if (pendingPaymentId) {
+      const existing = (await tx.get(payRef)).data() as (Payment & { receiptNo: string }) | undefined;
+      if (existing?.status === 'succeeded') return { paymentId: payRef.id, receiptNo: existing.receiptNo, status: deriveInvoiceStatus(inv, Date.now()), residentUid: inv.residentUid, propertyId: inv.propertyId, duplicate: true };
+    }
     let paid: number;
     try {
       paid = applyPayment(inv, amount);
@@ -129,7 +137,7 @@ async function settle(caller: Caller | { uid: string; system: true }, orgId: str
       mode, status: 'succeeded', receiptNo, createdAt: t, updatedAt: t, createdBy: caller.uid,
     } satisfies Payment & Record<string, unknown>);
     await audit({ actorUid: caller.uid, actorRole: 'system' in caller ? 'system' : roleLabel(caller), action: 'payment.recorded', entity: 'payment', entityId: payRef.id, orgId, metadata: { invoiceId, amount, method, mode } }, tx);
-    return { paymentId: payRef.id, receiptNo, status, residentUid: inv.residentUid, propertyId: inv.propertyId };
+    return { paymentId: payRef.id, receiptNo, status, residentUid: inv.residentUid, propertyId: inv.propertyId, duplicate: false };
   });
 }
 
@@ -149,8 +157,11 @@ export const recordPayment = onCall(async (req) => {
   return r;
 });
 
-/** Resident pays online. Test mode only until a gateway is configured. */
-export const payRentOnline = onCall(async (req) => {
+/**
+ * Resident pays online. Live: creates a Razorpay payment link and a pending payment; the
+ * signed webhook (payments.ts) settles it. Emulator / PAYMENTS_MODE=test: settles at once, marked test.
+ */
+export const payRentOnline = onCall({ secrets: PAYMENT_SECRETS }, async (req) => {
   const caller = requireAuth(req);
   const d = obj(req.data);
   if (!caller.stay) notAllowed();
@@ -160,8 +171,22 @@ export const payRentOnline = onCall(async (req) => {
   if (!inv || inv.residentUid !== caller.uid) return notFound('invoice');
   const amount = d.amount == null ? outstanding(inv) : int(d, 'amount', { min: 1 });
   if (amount <= 0) badInput('Nothing to pay on this invoice.');
-  const intent = await paymentGateway().createIntent({ amount, currency: 'INR', receipt: invoiceId, customerPhone: caller.phone });
-  if (intent.status !== 'succeeded') return { pending: true, checkoutUrl: intent.checkoutUrl };
+  if (amount > outstanding(inv)) badInput(`Amount is more than the ${formatINR(outstanding(inv))} due.`);
+  const gateway = paymentGateway();
+  const payRef = db.collection(paths.orgCol(orgId, 'payments')).doc();
+  const res = (await db.doc(`${paths.orgCol(orgId, 'residents')}/${inv.residentId}`).get()).data() as Resident | undefined;
+  const intent = await gateway.createIntent({
+    amount, currency: 'INR', receipt: payRef.id, customerPhone: caller.phone, customerName: res?.name ?? null,
+    description: `Rent ${inv.period}`, notes: { orgId, invoiceId, paymentId: payRef.id },
+  });
+  if (intent.status !== 'succeeded') {
+    const t = Date.now();
+    await payRef.set({
+      id: payRef.id, orgId, propertyId: inv.propertyId, residentId: inv.residentId, residentUid: inv.residentUid, invoiceId, amount, method: 'gateway',
+      gatewayRef: intent.gatewayRef, gateway: gateway.name, mode: intent.mode, status: 'pending', receiptNo: null, createdAt: t, updatedAt: t, createdBy: caller.uid,
+    });
+    return { pending: true, checkoutUrl: intent.checkoutUrl, paymentId: payRef.id };
+  }
   const r = await settle(caller, orgId, invoiceId, amount, 'gateway', intent.gatewayRef, intent.mode);
   await notifyOrg(orgId, r.propertyId, 'rent.read', { kind: 'payment', title: 'Rent received online', body: `${formatINR(amount)} · ${r.receiptNo}`, link: '/rent' });
   return { ...r, mode: intent.mode };

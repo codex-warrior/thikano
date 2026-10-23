@@ -6,7 +6,7 @@ import { audit } from './lib/audit';
 import { getMember, requireAuth, requireOwner, requirePlatformAdmin } from './lib/authz';
 import { badInput, fail, notFound } from './lib/errors';
 import { rateLimit } from './lib/rate-limit';
-import { smsProvider } from './lib/sms';
+import { OTP_SECRETS, smsProvider } from './lib/sms';
 import { id, indianPhone, obj, oneOf, optStr, str, strArray } from './lib/validate';
 
 const STAFF_PERMISSIONS: readonly StaffPermission[] = [
@@ -175,7 +175,7 @@ function otpSecret(): string {
 const hashCode = (challengeId: string, code: string) => createHmac('sha256', otpSecret()).update(`${challengeId}:${code}`).digest();
 const phoneKey = (phone: string) => createHash('sha256').update(phone).digest('hex');
 
-export const requestOtp = onCall(async (req) => {
+export const requestOtp = onCall({ secrets: OTP_SECRETS }, async (req) => {
   const d = obj(req.data);
   const phone = indianPhone(d);
   const ip = req.rawRequest?.ip ?? 'unknown';
@@ -186,12 +186,12 @@ export const requestOtp = onCall(async (req) => {
   const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
   const ref = db.collection('otpChallenges').doc();
   await ref.set({ phoneHash: phoneKey(phone), phone, codeHash: hashCode(ref.id, code).toString('hex'), attempts: 0, expiresAt: Date.now() + OTP_TTL_MS, createdAt: Date.now() });
-  await sms.send(phone, `${code} is your THIKANO code. It expires in 10 minutes. Do not share it.`);
+  await sms.sendOtp(phone, code);
   // The code is returned ONLY by the local emulator so automated tests can complete sign-in.
   return { challengeId: ref.id, ...(isEmulator() ? { devCode: code } : {}) };
 });
 
-export const verifyOtp = onCall(async (req) => {
+export const verifyOtp = onCall({ secrets: OTP_SECRETS }, async (req) => {
   const d = obj(req.data);
   const challengeId = id(d, 'challengeId');
   const code = str(d, 'code', { pattern: /^\d{6}$/ });
@@ -228,3 +228,47 @@ export const verifyOtp = onCall(async (req) => {
   const token = await auth.createCustomToken(user.uid);
   return { token };
 });
+
+// ───────────────────────── Account deletion (Play Store + DPDP Act) ─────────────────────────
+
+/**
+ * Deletes the caller's THIKANO account. Personal data is erased; records an owner is
+ * legally required to keep (rent, payments) stay with the property but are unlinked from
+ * the account. Active residents must complete move-out first; business owners close their
+ * business through support (residents' records depend on it).
+ */
+export const deleteAccount = onCall(async (req) => {
+  const caller = requireAuth(req);
+  const d = obj(req.data);
+  if (d.confirm !== 'DELETE') badInput('Please confirm account deletion.');
+  if (caller.stay) fail('failed-precondition', 'You have an active stay. Ask your owner to complete your move-out, then delete your account.');
+  const owned = await db.collectionGroup('members').where('uid', '==', caller.uid).where('role', '==', 'owner').limit(1).get();
+  if (!owned.empty) fail('failed-precondition', 'You own a business on THIKANO. Please contact THIKANO support to close it.');
+
+  const uid = caller.uid;
+  const [memberships, residents, leads, devices, inbox] = await Promise.all([
+    db.collectionGroup('members').where('uid', '==', uid).get(),
+    db.collectionGroup('residents').where('uid', '==', uid).get(),
+    db.collectionGroup('leads').where('studentUid', '==', uid).get(),
+    db.collection(`users/${uid}/devices`).get(),
+    db.collection(`users/${uid}/inbox`).get(),
+  ]);
+  const writes: ((b: FirebaseFirestore.WriteBatch) => void)[] = [];
+  for (const m of memberships.docs) writes.push((b) => b.update(m.ref, { status: 'removed', displayName: 'Deleted user' }));
+  for (const r of residents.docs) writes.push((b) => b.update(r.ref, { uid: null, residentUid: null, phone: '', name: 'Former resident', updatedAt: Date.now() }));
+  for (const l of leads.docs) writes.push((b) => b.update(l.ref, { studentUid: null, name: 'Deleted user', phone: '', message: '', updatedAt: Date.now() }));
+  for (const x of [...devices.docs, ...inbox.docs]) writes.push((b) => b.delete(x.ref));
+  writes.push((b) => b.delete(db.doc(`users/${uid}`)));
+  for (let i = 0; i < writes.length; i += 400) {
+    const batch = db.batch();
+    writes.slice(i, i + 400).forEach((w) => w(batch));
+    await batch.commit();
+  }
+  await audit({ actorUid: uid, actorRole: roleOf(caller), action: 'account.deleted', entity: 'user', entityId: uid, metadata: { residentsUnlinked: residents.size, leadsAnonymised: leads.size } });
+  await auth.deleteUser(uid);
+  return { ok: true };
+});
+
+function roleOf(caller: { platformRole: string | null }) {
+  return caller.platformRole ?? 'user';
+}

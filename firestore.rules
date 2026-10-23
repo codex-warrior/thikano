@@ -53,7 +53,8 @@ service cloud.firestore {
       allow delete: if false;
 
       match /devices/{deviceId} {
-        allow read, write: if signedIn() && me() == uid;
+        allow read, delete: if signedIn() && me() == uid;
+        allow create, update: if false; // registerDevice callable validates tokens
       }
       match /inbox/{itemId} {
         allow read: if signedIn() && me() == uid;
@@ -221,6 +222,7 @@ service cloud.firestore {
       allow write: if false;
     }
     match /platformStaff/{id} { allow read, write: if false; }
+    match /webhookEvents/{id} { allow read, write: if false; }
     match /ratings/{id} { allow read: if true; allow write: if false; }
     match /rateLimits/{id} { allow read, write: if false; }
     match /otpChallenges/{id} { allow read, write: if false; }
