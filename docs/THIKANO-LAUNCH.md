@@ -27,12 +27,14 @@ root: each backend's environment name (web|owner|admin) selects `apphosting.<nam
 `THIKANO_APP`; `tools/hoist-next-build.mjs` moves the build into the layout App Hosting's Next.js
 adapter expects.
 
+Android APK (internal, EAS preview profile): built and verified 2026-10-24; signing key in `apps/mobile/credentials/` (gitignored, back it up).
+
 ## Still to do
 
 | # | Who | Action |
 |---|---|---|
 | 1 | You | Sign in to Admin and Owner with Google once to confirm (Admin: ahamshashvat@gmail.com) |
-| 2 | You | `npx eas-cli login` once, then Claude builds the Android APK and registers its SHA-1 |
+| 2 | Claude | **Before public launch: remove the demo listings** (5 sample Jaipur PGs, 98 rooms, written 2026-10-24): `ACCESS_TOKEN=$(gcloud auth print-access-token) npx tsx tools/src/demo-listings.ts thikano-prod --remove` |
 | 3 | You | Business details for the legal pages (DRAFT banner shows until then), then a lawyer's review |
 | 4 | You | Buy thikano.in; Claude connects it (owner./admin. subdomains) and switches the public URL |
 | 5 | You | Razorpay KYC → Claude sets secrets and `PAYMENTS_MODE=razorpay` |
