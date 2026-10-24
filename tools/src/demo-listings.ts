@@ -1,8 +1,9 @@
 /**
  * TEMPORARY demo listings on a real project, so Explore and the public site are not empty
  * before the first owner lists. Writes only the listing side of the fixtures (organizations,
- * properties, rooms, beds, slugs, ratings and their public projections) plus three demo stays
- * redeemable with codes THKDEMO1–3. No Auth users and no money. Every path is derived from the
+ * properties, rooms, beds, slugs, ratings and their public projections) plus the demo PGs'
+ * residents, rent, issues, notices, parcels and leads; codes THKDEMO1–3 redeem three of the stays.
+ * No Auth users and no real money. Every path is derived from the
  * fixtures, so --remove deletes exactly what this wrote (an account that redeemed a code keeps
  * its stay claim until it signs out or uses Settings → delete account).
  *
@@ -34,18 +35,23 @@ for (const p of fx.properties) docs.push([`slugs/${p.slug}`, { kind: 'property',
 for (const r of fx.rooms) docs.push([`slugs/${r.publicSlug}`, { kind: 'room', id: r.id, orgId: r.orgId, propertyId: r.propertyId, createdAt: t0 }]);
 for (const p of fx.properties) docs.push([`ratings/${p.id}`, { rating: fx.ratings[p.id] ?? null, count: fx.ratingCounts[p.id] ?? 0 }]);
 for (const pr of fx.publicRooms) docs.push([`publicRooms/${pr.roomId}`, pr]);
-// Demo stays at Sunrise PG: unlinked residents with fixed invite codes, so a tester can redeem
-// one in the app and see Resident mode (rent due, notices, maintenance). Each code works once.
+// Day-to-day records for the demo PGs, so the demo owner account (Auth uid owner-shashank, created
+// separately — see docs/THIKANO-LAUNCH.md) sees a working PG. Every resident is unlinked; the first
+// three active Sunrise residents get fixed invite codes so a tester can redeem one in the app and
+// see Resident mode. Each code works once; re-running resets them (and any edits to these records).
 const DEMO_STAYS = fx.residents.filter((r) => r.propertyId === fx.DEMO.propertyId && r.status === 'active').slice(0, 3);
-const stayIds = new Set(DEMO_STAYS.map((r) => r.id));
-for (const [i, r] of DEMO_STAYS.entries()) {
-  const code = `THKDEMO${i + 1}`;
-  docs.push([`organizations/${r.orgId}/residents/${r.id}`, { ...r, uid: null, residentUid: null, inviteCode: code }]);
-  docs.push([`residentInvites/${code}`, { orgId: r.orgId, propertyId: r.propertyId, residentId: r.id, createdAt: t0, expiresAt: t0 + 90 * 86_400_000 }]);
+const codes = new Map(DEMO_STAYS.map((r, i) => [r.id, `THKDEMO${i + 1}`]));
+for (const r of fx.residents) docs.push([`organizations/${r.orgId}/residents/${r.id}`, { ...r, uid: null, residentUid: null, inviteCode: codes.get(r.id) ?? null }]);
+for (const [residentId, code] of codes) {
+  const r = DEMO_STAYS.find((x) => x.id === residentId)!;
+  docs.push([`residentInvites/${code}`, { orgId: r.orgId, propertyId: r.propertyId, residentId, createdAt: t0, expiresAt: t0 + 90 * 86_400_000 }]);
 }
-for (const inv of fx.invoices.filter((x) => stayIds.has(x.residentId))) docs.push([`organizations/${inv.orgId}/invoices/${inv.id}`, { ...inv, residentUid: null }]);
-for (const m of fx.maintenance.filter((x) => x.residentId && stayIds.has(x.residentId))) docs.push([`organizations/${m.orgId}/maintenance/${m.id}`, { ...m, residentUid: null }]);
-for (const n of fx.notices.filter((x) => x.propertyId === fx.DEMO.propertyId)) docs.push([`organizations/${n.orgId}/notices/${n.id}`, { ...n, pushedAt: n.publishedAt }]);
+for (const inv of fx.invoices) docs.push([`organizations/${inv.orgId}/invoices/${inv.id}`, { ...inv, residentUid: null }]);
+for (const m of fx.maintenance) docs.push([`organizations/${m.orgId}/maintenance/${m.id}`, { ...m, residentUid: null }]);
+for (const n of fx.notices) docs.push([`organizations/${n.orgId}/notices/${n.id}`, { ...n, pushedAt: n.publishedAt }]);
+for (const p of fx.parcels) docs.push([`organizations/${p.orgId}/parcels/${p.id}`, { ...p, residentUid: null }]);
+for (const l of fx.leads) docs.push([`organizations/${l.orgId}/leads/${l.id}`, l]);
+for (const b of fx.bookings) docs.push([`organizations/${b.orgId}/bookings/${b.id}`, b]);
 
 for (const p of fx.properties) {
   const pp = projectPublicProperty(p, fx.publicRooms.filter((r: PublicRoom) => r.propertyId === p.id), { rating: fx.ratings[p.id] ?? null, ratingCount: fx.ratingCounts[p.id] ?? 0 });
@@ -75,6 +81,15 @@ async function main() {
       body: JSON.stringify({ writes }),
     });
     if (!res.ok) throw new Error(`commit failed (${res.status}): ${await res.text()}`);
+  }
+  if (remove) {
+    // The demo owner login (created by hand with the Identity Toolkit API) goes with its data.
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/${project}/accounts:delete`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json', 'x-goog-user-project': project! },
+      body: JSON.stringify({ localId: fx.DEMO.ownerUid }),
+    });
+    if (!res.ok && !(await res.text()).includes('USER_NOT_FOUND')) throw new Error(`could not delete demo owner (${res.status})`);
   }
   console.log(`${remove ? 'Removed' : 'Wrote'} ${docs.length} demo listing documents ${remove ? 'from' : 'to'} ${project}: ${fx.properties.length} properties, ${fx.publicRooms.length} public rooms.`);
   if (!remove) console.log(`Invite codes: ${DEMO_STAYS.map((r, i) => `THKDEMO${i + 1} (${r.name}, room ${r.roomId.split("-r").pop()})`).join(", ")}`);

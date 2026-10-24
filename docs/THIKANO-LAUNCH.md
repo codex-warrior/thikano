@@ -34,7 +34,7 @@ Android APK (internal, EAS preview profile): built and verified 2026-10-24; sign
 | # | Who | Action |
 |---|---|---|
 | 1 | You | Sign in to Admin and Owner with Google once to confirm (Admin: ahamshashvat@gmail.com) |
-| 2 | Claude | **Before public launch: remove the demo listings** (5 sample Jaipur PGs, 98 rooms, 3 demo stays with invite codes THKDEMO1–3, written 2026-10-24): `ACCESS_TOKEN=$(gcloud auth print-access-token) npx tsx tools/src/demo-listings.ts thikano-prod --remove` |
+| 2 | Claude | **Before public launch: remove the demo listings** (5 sample Jaipur PGs, 98 rooms, their residents/rent/leads, invite codes THKDEMO1–3, and the demo owner login `demo.owner@thikano.test` (uid owner-shashank, password in gitignored `apps/mobile/credentials/demo-owner-password.txt`), written 2026-10-24; `--remove` deletes the login too): `ACCESS_TOKEN=$(gcloud auth print-access-token) npx tsx tools/src/demo-listings.ts thikano-prod --remove` |
 | 3 | You | Business details for the legal pages (DRAFT banner shows until then), then a lawyer's review |
 | 4 | You | Buy thikano.in; Claude connects it (owner./admin. subdomains) and switches the public URL |
 | 5 | You | Razorpay KYC → Claude sets secrets and `PAYMENTS_MODE=razorpay` |
