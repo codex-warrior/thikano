@@ -12,7 +12,7 @@ export default function DiscoverProfile() {
       <H1>Profile</H1>
       {mode === 'guest' ? (
         <Card style={{ gap: 10 }}>
-          <H2>Sign in to THIKANO</H2>
+          <H2>Sign in to Habistat</H2>
           <Body>Save rooms, track your enquiries and — once you move in — manage your stay.</Body>
           <Button label="Sign in" icon="log-in" onPress={() => router.push('/sign-in')} />
         </Card>

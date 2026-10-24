@@ -1,4 +1,4 @@
-# THIKANO — Design System
+# Habistat — Design System
 
 Tokens: `packages/tokens/src/index.ts` (mobile) is mirrored by `packages/web-ui/src/theme.css` (web, Tailwind v4 `@theme`). Change both together.
 
@@ -37,7 +37,7 @@ Copy is short and human:
 |---|---|
 | "Rooms & Beds" | "Property inventory management" |
 | "₹8,500 due" | "Outstanding financial obligation" |
-| "List on THIKANO" | "Create a new inventory listing" |
+| "List on Habistat" | "Create a new inventory listing" |
 | "Share Room" | "Generate public room URL" |
 | "Request sent ✓" | "Maintenance request has been successfully submitted" |
 

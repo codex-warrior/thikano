@@ -42,7 +42,7 @@ export function isSearchable(status: ListingStatus): boolean {
 export const LISTING_STATUS_LABEL: Record<ListingStatus, string> = {
   draft: 'Not listed',
   pending_verification: 'Awaiting verification',
-  published: 'Listed on THIKANO',
+  published: 'Listed on Habistat',
   paused: 'Paused',
   fully_occupied: 'Fully occupied',
   suspended: 'Suspended',

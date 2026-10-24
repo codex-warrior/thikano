@@ -5,7 +5,7 @@ import { requireAuth } from './lib/authz';
 import { notAllowed } from './lib/errors';
 
 /**
- * Everything the Resident app needs in one authorized read ("THIKANO Daily").
+ * Everything the Resident app needs in one authorized read ("Habistat Daily").
  * Residents may not read other residents or owner inventory directly — this function
  * returns only what belongs to them plus roommates' first names.
  */

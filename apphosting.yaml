@@ -29,5 +29,5 @@ env:
     value: 1:780398725785:web:8d1d604624fb75d588c608
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_PUBLIC_WEB_URL
-    value: https://web--thikano-prod.asia-southeast1.hosted.app  # switch to https://thikano.in once the domain is connected
+    value: https://web--thikano-prod.asia-southeast1.hosted.app  # switch to https://habistat.com once the domain is connected
     availability: [BUILD, RUNTIME]

@@ -103,7 +103,7 @@ export const refreshInvoices = onSchedule({ schedule: '0 7 * * *', timeZone: 'As
     const status = deriveInvoiceStatus({ ...inv, lateFee }, t);
     if (status !== inv.status || lateFee !== inv.lateFee) await s.ref.update({ status, lateFee, updatedAt: t });
     if (status === 'due' && inv.status === 'upcoming' && inv.residentUid) {
-      await notifyUsers([inv.residentUid], { kind: 'rent', title: 'Rent due soon', body: `${formatINR(outstanding({ ...inv, lateFee }))} due on ${new Date(inv.dueDate + 330 * 60_000).toISOString().slice(0, 10)}`, link: 'thikano://stay' });
+      await notifyUsers([inv.residentUid], { kind: 'rent', title: 'Rent due soon', body: `${formatINR(outstanding({ ...inv, lateFee }))} due on ${new Date(inv.dueDate + 330 * 60_000).toISOString().slice(0, 10)}`, link: 'habistat://stay' });
     }
   }
 });
@@ -153,7 +153,7 @@ export const recordPayment = onCall(async (req) => {
   if (!inv) return notFound('invoice');
   await requirePermission(caller, orgId, 'rent.collect', inv.propertyId);
   const r = await settle(caller, orgId, invoiceId, amount, method, optStr(d, 'reference', 80), 'manual');
-  if (r.residentUid) await notifyUsers([r.residentUid], { kind: 'payment', title: 'Payment received ✓', body: `${formatINR(amount)} · Receipt ${r.receiptNo}`, link: 'thikano://stay' });
+  if (r.residentUid) await notifyUsers([r.residentUid], { kind: 'payment', title: 'Payment received ✓', body: `${formatINR(amount)} · Receipt ${r.receiptNo}`, link: 'habistat://stay' });
   return r;
 });
 
@@ -228,7 +228,7 @@ export const onMaintenanceUpdated = onDocumentUpdated('organizations/{orgId}/mai
   if (after.status === 'resolved' && !after.resolvedAt) await event.data!.after.ref.update({ resolvedAt: Date.now() });
   if (after.residentUid) {
     const label = { open: 'reopened', assigned: 'assigned', in_progress: 'in progress', resolved: 'resolved ✓', cancelled: 'cancelled' }[after.status];
-    await notifyUsers([after.residentUid], { kind: 'maintenance', title: `Your ${MAINTENANCE_CATEGORY_LABEL[after.category]} request is ${label}`, body: after.description, link: 'thikano://stay' });
+    await notifyUsers([after.residentUid], { kind: 'maintenance', title: `Your ${MAINTENANCE_CATEGORY_LABEL[after.category]} request is ${label}`, body: after.description, link: 'habistat://stay' });
   }
 });
 
@@ -251,7 +251,7 @@ export const onNoticeWritten = onDocumentWritten('organizations/{orgId}/notices/
   const after = event.data?.after.data() as (Notice & { pushedAt?: number }) | undefined;
   if (!after || !after.publishedAt || after.pushedAt || before?.publishedAt) return;
   const uids = await residentUidsFor(event.params.orgId, after.propertyId, after.buildingIds);
-  await notifyUsers(uids, { kind: 'notice', title: after.title, body: after.body.slice(0, 140), link: 'thikano://home' });
+  await notifyUsers(uids, { kind: 'notice', title: after.title, body: after.body.slice(0, 140), link: 'habistat://home' });
   await event.data!.after.ref.update({ pushedAt: Date.now() });
 });
 
@@ -264,6 +264,6 @@ export const onParcelCreated = onDocumentCreated('organizations/{orgId}/parcels/
     uid = res?.uid ?? undefined;
     if (uid) await event.data!.ref.update({ residentUid: uid });
   }
-  if (uid) await notifyUsers([uid], { kind: 'parcel', title: 'Parcel arrived 📦', body: `${p.carrier} · at ${p.location}`, link: 'thikano://home' });
+  if (uid) await notifyUsers([uid], { kind: 'parcel', title: 'Parcel arrived 📦', body: `${p.carrier} · at ${p.location}`, link: 'habistat://home' });
 });
 

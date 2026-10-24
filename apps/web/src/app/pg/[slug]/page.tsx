@@ -65,11 +65,11 @@ export default async function PropertyPage({ params, searchParams }: Props) {
               </span>
               {p.rating ? (
                 <span className="inline-flex items-center gap-1.5">
-                  <Star size={15} className="fill-marigold-500 text-marigold-500" /> {p.rating} ({p.ratingCount})
+                  <Star size={15} className="fill-accent-500 text-accent-500" /> {p.rating} ({p.ratingCount})
                 </span>
               ) : null}
               <span className="inline-flex items-center gap-1.5 text-ok-600">
-                <ShieldCheck size={15} /> Verified by THIKANO
+                <ShieldCheck size={15} /> Verified by Habistat
               </span>
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-3">

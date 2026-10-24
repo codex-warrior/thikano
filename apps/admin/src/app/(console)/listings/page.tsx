@@ -7,7 +7,7 @@ import { requirePlatform } from '@/lib/session';
 
 export const metadata = { title: 'Listings' };
 
-const PUBLIC_WEB = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://thikano.in';
+const PUBLIC_WEB = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://habistat.com';
 
 export default async function ListingsPage() {
   const s = await requirePlatform();

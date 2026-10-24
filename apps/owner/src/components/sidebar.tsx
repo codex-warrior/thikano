@@ -43,7 +43,7 @@ export function Sidebar({ nav, badges }: { nav: { group?: string; items: NavItem
                     >
                       <NavIcon name={item.icon} />
                       <span className="flex-1">{item.label}</span>
-                      {badges[item.href] ? <span className="tabular rounded-full bg-marigold-500 px-1.5 text-[11px] font-bold text-navy-950">{badges[item.href]}</span> : null}
+                      {badges[item.href] ? <span className="tabular rounded-full bg-accent-500 px-1.5 text-[11px] font-bold text-navy-950">{badges[item.href]}</span> : null}
                     </Link>
                   </li>
                 ))}

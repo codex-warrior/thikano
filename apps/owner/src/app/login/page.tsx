@@ -17,7 +17,7 @@ export default function LoginPage() {
             <li>• Rent, maintenance and notices without the registers</li>
           </ul>
         </div>
-        <p className="text-[12px] text-navy-300">© THIKANO · The operating system for PGs & hostels</p>
+        <p className="text-[12px] text-navy-300">© Habistat · The operating system for PGs & hostels</p>
       </div>
       <div className="flex items-center justify-center p-6">
         <div className="w-full max-w-sm">

@@ -7,7 +7,7 @@ export default function Privacy() {
   return (
     <LegalPage title="Privacy Policy">
       <p>
-        THIKANO is operated by {LEGAL.entityName} (“THIKANO”, “we”). This policy explains what personal data we process when you use the THIKANO app, website and owner tools, why we
+        Habistat is operated by {LEGAL.entityName} (“Habistat”, “we”). This policy explains what personal data we process when you use the Habistat app, website and owner tools, why we
         process it, and your rights under the Digital Personal Data Protection Act, 2023 and other applicable Indian law.
       </p>
       <h2>What we collect</h2>
@@ -24,7 +24,7 @@ export default function Privacy() {
       <ul>
         <li>To let you find rooms and send enquiries, and to let the PG you contact reply.</li>
         <li>To run your stay: rent, receipts, notices, maintenance and services.</li>
-        <li>To keep THIKANO secure (fraud prevention, rate limiting, audit logs).</li>
+        <li>To keep Habistat secure (fraud prevention, rate limiting, audit logs).</li>
         <li>To understand demand in aggregate and improve the product.</li>
       </ul>
       <h2>Who sees your data</h2>

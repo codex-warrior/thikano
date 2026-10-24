@@ -40,7 +40,7 @@ export default function MyStay() {
         <Text style={{ color: color.navy[200] }}>
           {SHARING_LABEL[h.room.sharing]} · Since {since}
         </Text>
-        {h.resident.moveOutDate ? <Text style={{ color: color.marigold[500], fontWeight: '600' }}>Moving out {new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(h.resident.moveOutDate)}</Text> : null}
+        {h.resident.moveOutDate ? <Text style={{ color: color.accent[500], fontWeight: '600' }}>Moving out {new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(h.resident.moveOutDate)}</Text> : null}
       </Card>
 
       <Button label="Report a problem" icon="tool" onPress={() => setReporting(true)} />

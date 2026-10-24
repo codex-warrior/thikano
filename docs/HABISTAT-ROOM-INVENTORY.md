@@ -1,4 +1,4 @@
-# THIKANO — Room Inventory
+# Habistat — Room Inventory
 
 Hierarchy: `Organization → Property → Building → Floor → Room → Bed → Resident`.
 
@@ -35,7 +35,7 @@ Invalid transitions throw `InvalidTransitionError` (for example, assigning an oc
 
 ## Room statuses
 
-The spec lists room states that mix three different things. THIKANO keeps them separate so they never conflict:
+The spec lists room states that mix three different things. Habistat keeps them separate so they never conflict:
 
 | Concept | Values | Who sets it |
 |---|---|---|

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# THIKANO go-live: run ONCE after billing (Blaze) is attached to the project.
+# Habistat go-live: run ONCE after billing (Blaze) is attached to the project.
 #
 #   bash tools/go-live.sh thikano-prod <billing-account-id> --yes
 #
@@ -52,8 +52,8 @@ gcloud iam service-accounts add-iam-policy-binding "$SA" --project "$PROJECT" \
   --member="serviceAccount:$SA" --role=roles/iam.serviceAccountTokenCreator >/dev/null && echo "signBlob granted to $SA"
 
 step "Budget alert: ₹2,000/month at 50/90/100%"
-if ! gcloud billing budgets list --billing-project="$PROJECT" --billing-account="$BILLING" --format='value(displayName)' | grep -q "THIKANO $PROJECT"; then
-  gcloud billing budgets create --billing-project="$PROJECT" --billing-account="$BILLING" --display-name="THIKANO $PROJECT" \
+if ! gcloud billing budgets list --billing-project="$PROJECT" --billing-account="$BILLING" --format='value(displayName)' | grep -q "Habistat $PROJECT"; then
+  gcloud billing budgets create --billing-project="$PROJECT" --billing-account="$BILLING" --display-name="Habistat $PROJECT" \
     --budget-amount=2000INR --filter-projects="projects/$PROJECT" \
     --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0
 fi

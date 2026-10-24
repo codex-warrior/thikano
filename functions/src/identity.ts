@@ -69,7 +69,7 @@ export const createOrganization = onCall(async (req) => {
   const ownerName = optStr(d, 'ownerName', 60) ?? caller.name ?? 'Owner';
 
   const existing = await db.collectionGroup('members').where('uid', '==', caller.uid).where('role', '==', 'owner').limit(1).get();
-  if (!existing.empty) fail('already-exists', 'You already have a THIKANO business account.');
+  if (!existing.empty) fail('already-exists', 'You already have a Habistat business account.');
 
   const orgRef = db.collection('organizations').doc();
   const t = Date.now();
@@ -230,7 +230,7 @@ export const verifyOtp = onCall({ secrets: OTP_SECRETS }, async (req) => {
     fail('deadline-exceeded', 'This code has expired. Please request a new one.');
   }
   const user = await findOrCreateUser(result.phone, null, '');
-  if (user.disabled) fail('permission-denied', 'This account has been disabled. Please contact THIKANO support.');
+  if (user.disabled) fail('permission-denied', 'This account has been disabled. Please contact Habistat support.');
   const token = await auth.createCustomToken(user.uid);
   return { token };
 });
@@ -238,7 +238,7 @@ export const verifyOtp = onCall({ secrets: OTP_SECRETS }, async (req) => {
 // ───────────────────────── Account deletion (Play Store + DPDP Act) ─────────────────────────
 
 /**
- * Deletes the caller's THIKANO account. Personal data is erased; records an owner is
+ * Deletes the caller's Habistat account. Personal data is erased; records an owner is
  * legally required to keep (rent, payments) stay with the property but are unlinked from
  * the account. Active residents must complete move-out first; business owners close their
  * business through support (residents' records depend on it).
@@ -249,7 +249,7 @@ export const deleteAccount = onCall(async (req) => {
   if (d.confirm !== 'DELETE') badInput('Please confirm account deletion.');
   if (caller.stay) fail('failed-precondition', 'You have an active stay. Ask your owner to complete your move-out, then delete your account.');
   const owned = await db.collectionGroup('members').where('uid', '==', caller.uid).where('role', '==', 'owner').limit(1).get();
-  if (!owned.empty) fail('failed-precondition', 'You own a business on THIKANO. Please contact THIKANO support to close it.');
+  if (!owned.empty) fail('failed-precondition', 'You own a business on Habistat. Please contact Habistat support to close it.');
 
   const uid = caller.uid;
   const [memberships, residents, leads, devices, inbox] = await Promise.all([

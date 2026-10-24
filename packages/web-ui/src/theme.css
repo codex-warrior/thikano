@@ -1,4 +1,4 @@
-/* THIKANO web theme — mirrors packages/tokens/src/index.ts. Change both together. */
+/* Habistat web theme — mirrors packages/tokens/src/index.ts. Change both together. */
 @theme {
   --color-navy-950: #070E22;
   --color-navy-900: #0B1633;
@@ -11,9 +11,11 @@
   --color-navy-100: #E4E9F3;
   --color-navy-50: #F1F4F9;
 
-  --color-marigold-600: #B9791A;
-  --color-marigold-500: #D99A2B;
-  --color-marigold-100: #FBF0DA;
+  --color-accent-600: #1D4ED8;
+  --color-accent-500: #275DFC;
+  --color-accent-100: #E7EEFF;
+  --color-brand-navy: #011C5B;
+  --color-brand-blue: #275DFC;
 
   --color-ink-900: #0D1730;
   --color-ink-700: #2D3850;

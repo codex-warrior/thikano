@@ -1,4 +1,4 @@
-# THIKANO — Launch Plan
+# Habistat — Launch Plan
 
 _Last updated 2026-10-23._
 
@@ -29,16 +29,16 @@ adapter expects.
 
 Android APK (internal, EAS preview profile): built and verified 2026-10-24; signing key in `apps/mobile/credentials/` (gitignored, back it up).
 
-Owner app: the owner console is installable (web manifest) and wrapped as an Android TWA, `com.thikano.owner`, in `apps/owner-android/` (see `generate.js`). It is signed with the same upload key, verified by `apps/owner/public/.well-known/assetlinks.json`, so it opens full-screen. The APK is built locally to `dist/thikano-owner.apk` (gitignored). Console changes reach it without a rebuild. Verified on an Android 16 emulator 2026-10-24 (demo owner login, dashboard).
+Owner app: the owner console is installable (web manifest) and wrapped as an Android TWA, `com.habistat.owner`, in `apps/owner-android/` (see `generate.js`). It is signed with the same upload key, verified by `apps/owner/public/.well-known/assetlinks.json`, so it opens full-screen. The APK is built locally to `dist/thikano-owner.apk` (gitignored). Console changes reach it without a rebuild. Verified on an Android 16 emulator 2026-10-24 (demo owner login, dashboard).
 
 ## Still to do
 
 | # | Who | Action |
 |---|---|---|
 | 1 | You | Sign in to Admin and Owner with Google once to confirm (Admin: ahamshashvat@gmail.com) |
-| 2 | Claude | **Before public launch: remove the demo listings** (5 sample Jaipur PGs, 98 rooms, their residents/rent/leads, invite codes THKDEMO1–3, and the demo owner login `demo.owner@thikano.test` (uid owner-shashank, password in gitignored `apps/mobile/credentials/demo-owner-password.txt`), written 2026-10-24; `--remove` deletes the login too): `ACCESS_TOKEN=$(gcloud auth print-access-token) npx tsx tools/src/demo-listings.ts thikano-prod --remove` |
+| 2 | Claude | **Before public launch: remove the demo listings** (5 sample Jaipur PGs, 98 rooms, their residents/rent/leads, invite codes THKDEMO1–3, and the demo owner login `demo.owner@habistat.test` (uid owner-shashank, password in gitignored `apps/mobile/credentials/demo-owner-password.txt`), written 2026-10-24; `--remove` deletes the login too): `ACCESS_TOKEN=$(gcloud auth print-access-token) npx tsx tools/src/demo-listings.ts thikano-prod --remove` |
 | 3 | You | Business details for the legal pages (DRAFT banner shows until then), then a lawyer's review |
-| 4 | You | Buy thikano.in; Claude connects it (owner./admin. subdomains) and switches the public URL |
+| 4 | You | Buy habistat.com; Claude connects it (owner./admin. subdomains) and switches the public URL |
 | 5 | You | Razorpay KYC → Claude sets secrets and `PAYMENTS_MODE=razorpay` |
 | 6 | You | Play Console / Apple developer accounts for store releases |
 

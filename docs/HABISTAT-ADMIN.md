@@ -1,4 +1,4 @@
-# THIKANO — Admin
+# Habistat — Admin
 
 A separate Next.js app (`apps/admin`). Access requires the `platformRole` custom claim, which is checked on the server for every route and every server action.
 
@@ -21,7 +21,7 @@ Approve, reject, suspend, unpublish, edit, flag, and inspect. Admins can also vi
 
 ## Dashboard metrics (all from real data)
 
-Properties, Owners, Active residents, Students searching (7-day unique search sessions), Available beds, Bookings this month, Service GMV, and THIKANO revenue (`platformLedger.thikano` sum). The values come from `analyticsDaily` aggregates, not from counting live collections.
+Properties, Owners, Active residents, Students searching (7-day unique search sessions), Available beds, Bookings this month, Service GMV, and Habistat revenue (`platformLedger.thikano` sum). The values come from `analyticsDaily` aggregates, not from counting live collections.
 
 ## Privacy inside Admin
 

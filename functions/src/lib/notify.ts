@@ -4,7 +4,7 @@ import { db } from './admin';
 export interface Notification {
   title: string;
   body: string;
-  /** Deep link handled by the apps, e.g. "/leads?lead=abc" or "thikano://stay". */
+  /** Deep link handled by the apps, e.g. "/leads?lead=abc" or "habistat://stay". */
   link?: string;
   kind: 'lead' | 'booking' | 'rent' | 'payment' | 'maintenance' | 'notice' | 'parcel' | 'service' | 'verification' | 'system';
 }

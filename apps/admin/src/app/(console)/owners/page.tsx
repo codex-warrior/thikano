@@ -10,7 +10,7 @@ export default async function OwnersPage() {
   const rows = await getOwners(s);
   return (
     <div className="space-y-6">
-      <PageHeader title="Owners" subtitle={`${rows.length} businesses on THIKANO`} />
+      <PageHeader title="Owners" subtitle={`${rows.length} businesses on Habistat`} />
       <Table
         rows={rows}
         rowKey={(r) => r.org.id}

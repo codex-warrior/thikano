@@ -66,7 +66,7 @@ export default function RoomScreen() {
           </View>
           <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 4 }}>
             <Icon name="shield" size={14} color={color.success[600]} />
-            <Small style={{ color: color.success[600] }}>Verified by THIKANO · {room.locality}</Small>
+            <Small style={{ color: color.success[600] }}>Verified by Habistat · {room.locality}</Small>
           </View>
         </View>
 

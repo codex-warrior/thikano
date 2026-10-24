@@ -6,7 +6,7 @@ import { fail } from './errors';
 import { notifyUsers } from './notify';
 
 /**
- * Linking a resident record (created by the owner) to a THIKANO account.
+ * Linking a resident record (created by the owner) to a Habistat account.
  * Sign-in is Google-first, so we never create accounts on a resident's behalf. A resident
  * is linked when ANY of these match an existing account:
  *   1. the student who enquired/applied while signed in (booking.studentUid)
@@ -63,7 +63,7 @@ export async function hasActiveStay(uid: string): Promise<boolean> {
  * the user gets activeStay + the stay claim (the app switches to Resident mode).
  */
 export async function linkResident(orgId: string, residentId: string, uid: string, actor: { uid: string; role: string }): Promise<{ propertyId: string }> {
-  if (await hasActiveStay(uid)) fail('failed-precondition', 'This account already has an active stay on THIKANO.');
+  if (await hasActiveStay(uid)) fail('failed-precondition', 'This account already has an active stay on Habistat.');
   const resRef = db.doc(`${paths.orgCol(orgId, 'residents')}/${residentId}`);
   const res = await db.runTransaction(async (tx) => {
     const r = (await tx.get(resRef)).data() as (Resident & { inviteCode?: string | null }) | undefined;
@@ -85,7 +85,7 @@ export async function linkResident(orgId: string, residentId: string, uid: strin
   await batch.commit();
   await setStayClaim(uid, { o: orgId, p: res.propertyId, r: residentId });
   const room = (await db.doc(paths.room(orgId, res.propertyId, res.roomId)).get()).data() as Room | undefined;
-  await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set${room ? ` in Room ${room.number}` : ''}. Rent ${formatINR(res.rent)}/month.`, link: 'thikano://home' });
+  await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set${room ? ` in Room ${room.number}` : ''}. Rent ${formatINR(res.rent)}/month.`, link: 'habistat://home' });
   return { propertyId: res.propertyId };
 }
 

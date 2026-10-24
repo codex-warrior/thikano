@@ -77,11 +77,11 @@ export default async function RoomPage({ params, searchParams }: Props) {
               </span>
               {property.rating ? (
                 <span className="inline-flex items-center gap-1.5">
-                  <Star size={15} className="fill-marigold-500 text-marigold-500" /> {property.rating}
+                  <Star size={15} className="fill-accent-500 text-accent-500" /> {property.rating}
                 </span>
               ) : null}
               <span className="inline-flex items-center gap-1.5 text-ok-600">
-                <ShieldCheck size={15} /> Verified by THIKANO
+                <ShieldCheck size={15} /> Verified by Habistat
               </span>
             </div>
 

@@ -23,7 +23,7 @@ export async function registerForPush(): Promise<void> {
   try {
     if (Platform.OS === 'android') {
       // Android 13+: a channel must exist before the token is requested.
-      await Notifications.setNotificationChannelAsync('default', { name: 'THIKANO', importance: Notifications.AndroidImportance.HIGH });
+      await Notifications.setNotificationChannelAsync('default', { name: 'Habistat', importance: Notifications.AndroidImportance.HIGH });
     }
     const current = await Notifications.getPermissionsAsync();
     const granted = current.granted || (await Notifications.requestPermissionsAsync()).granted;

@@ -1,5 +1,5 @@
 /**
- * All money in THIKANO is stored as integer paise (₹1 = 100 paise).
+ * All money in Habistat is stored as integer paise (₹1 = 100 paise).
  * Never store rupees as floats.
  */
 export type Paise = number;

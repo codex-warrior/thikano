@@ -44,7 +44,7 @@ export function Sidebar({ nav, badges }: { nav: { group?: string; items: NavItem
                   className={cx('flex items-center justify-between rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors', active(item.href) ? 'bg-white/10 text-white' : 'text-navy-200 hover:bg-white/5 hover:text-white')}
                 >
                   {item.label}
-                  {badges[item.href] ? <span className="tabular rounded-full bg-marigold-500 px-1.5 text-[11px] font-bold text-navy-950">{badges[item.href]}</span> : null}
+                  {badges[item.href] ? <span className="tabular rounded-full bg-accent-500 px-1.5 text-[11px] font-bold text-navy-950">{badges[item.href]}</span> : null}
                 </Link>
               ))}
             </div>

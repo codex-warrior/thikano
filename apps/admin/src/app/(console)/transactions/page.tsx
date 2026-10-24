@@ -20,7 +20,7 @@ export default async function TransactionsPage() {
           { key: 'c', header: 'Service', cell: (l) => `${l.category} · ${l.providerId}` },
           { key: 'g', header: 'Gross', align: 'right', cell: (l) => formatINR(l.gross) },
           { key: 'p', header: 'Provider', align: 'right', cell: (l) => formatINR(l.provider) },
-          { key: 't', header: 'THIKANO', align: 'right', cell: (l) => formatINR(l.thikano) },
+          { key: 't', header: 'Habistat', align: 'right', cell: (l) => formatINR(l.thikano) },
           { key: 'pa', header: 'Partner', align: 'right', cell: (l) => formatINR(l.partner) },
           { key: 'f', header: 'Fees', align: 'right', cell: (l) => formatINR(l.otherFees) },
           { key: 'd', header: 'Date', cell: (l) => fmtDate(l.createdAt, true) },

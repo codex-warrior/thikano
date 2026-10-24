@@ -12,9 +12,9 @@ export const metadata = { title: 'Dashboard' };
 const CATEGORY_LABEL: Partial<Record<ServiceCategory, string>> = { food: 'Food', laundry: 'Laundry', cleaning: 'Cleaning', groceries: 'Groceries', pharmacy: 'Pharmacy', other: 'Other' };
 const VERIFY_COPY: Record<string, string> = {
   draft: 'Finish your property details and submit for verification to start listing rooms.',
-  submitted: 'THIKANO is reviewing your property. Listed rooms go live as soon as it is verified.',
-  changes_requested: 'THIKANO asked for a few changes before verifying your property.',
-  rejected: 'This property was not approved. Contact THIKANO support for help.',
+  submitted: 'Habistat is reviewing your property. Listed rooms go live as soon as it is verified.',
+  changes_requested: 'Habistat asked for a few changes before verifying your property.',
+  rejected: 'This property was not approved. Contact Habistat support for help.',
   suspended: 'This property is suspended. Listings are hidden from students.',
 };
 
@@ -45,7 +45,7 @@ export default async function DashboardPage() {
     attention.push({ icon: <BedDouble size={16} />, tone: 'bg-navy-100 text-navy-700', title: `${d.vacantBeds} vacant bed${d.vacantBeds === 1 ? '' : 's'}`, detail: `${formatINR(d.vacantRevenue)} / month not being earned`, action: 'List rooms', href: '/vacancies' });
   }
   if (d.newLeads.length) {
-    attention.push({ icon: <Inbox size={16} />, tone: 'bg-marigold-100 text-marigold-600', title: `${d.newLeads.length} student${d.newLeads.length === 1 ? '' : 's'} interested`, detail: 'New enquiries waiting for a reply', action: 'View leads', href: '/leads' });
+    attention.push({ icon: <Inbox size={16} />, tone: 'bg-accent-100 text-accent-600', title: `${d.newLeads.length} student${d.newLeads.length === 1 ? '' : 's'} interested`, detail: 'New enquiries waiting for a reply', action: 'View leads', href: '/leads' });
   }
 
   return (
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
           <p className="mt-1 text-[14px] text-ink-500">Here&apos;s what&apos;s happening at {property.name} today.</p>
         </div>
         <div className="flex gap-2">
-          <ShareButton kind="pg" slug={property.slug} title={property.name} summary={`${d.vacantBeds} beds currently available`} target={{ orgId: session.orgId, propertyId: property.id }} disabledReason={property.verification === 'verified' ? undefined : 'Sharing opens once THIKANO verifies this property'} />
+          <ShareButton kind="pg" slug={property.slug} title={property.name} summary={`${d.vacantBeds} beds currently available`} target={{ orgId: session.orgId, propertyId: property.id }} disabledReason={property.verification === 'verified' ? undefined : 'Sharing opens once Habistat verifies this property'} />
           <Link href="/vacancies" className={buttonClass('primary', 'sm')}>
             <DoorOpen size={14} /> Fill vacancies
           </Link>
@@ -106,16 +106,16 @@ export default async function DashboardPage() {
 
         {d.earnings ? (
           <section>
-            <SectionHeader title="THIKANO earnings" subtitle="Your partner share from resident services" action={<Link href="/earnings" className="text-[12.5px] font-semibold text-navy-700">Details</Link>} />
+            <SectionHeader title="Habistat earnings" subtitle="Your partner share from resident services" action={<Link href="/earnings" className="text-[12.5px] font-semibold text-navy-700">Details</Link>} />
             <Card className="p-5">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-full bg-marigold-100 text-marigold-600">
+                <span className="grid size-10 place-items-center rounded-full bg-accent-100 text-accent-600">
                   <Sparkles size={18} />
                 </span>
                 <p className="tabular font-display text-[28px] font-bold">{formatINR(d.earnings.total)}</p>
               </div>
               {d.earnings.total === 0 ? (
-                <p className="mt-4 text-[13px] text-ink-500">Earnings appear when residents order food, laundry and cleaning through THIKANO.</p>
+                <p className="mt-4 text-[13px] text-ink-500">Earnings appear when residents order food, laundry and cleaning through Habistat.</p>
               ) : (
                 <ul className="mt-5 space-y-3">
                   {Object.entries(d.earnings.byCategory)

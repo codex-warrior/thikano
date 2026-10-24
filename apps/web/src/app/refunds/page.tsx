@@ -8,11 +8,11 @@ export default function Refunds() {
     <LegalPage title="Refund & Cancellation Policy">
       <h2>Rent payments</h2>
       <ul>
-        <li>Rent paid through THIKANO is paid to your PG for the billed month and is not refundable through THIKANO once the period has started, except where your PG agrees.</li>
+        <li>Rent paid through Habistat is paid to your PG for the billed month and is not refundable through Habistat once the period has started, except where your PG agrees.</li>
         <li>If you were charged twice or a payment failed but money was debited, contact {LEGAL.supportEmail} with your receipt number. Verified duplicate or failed payments are refunded to the original payment method within 7 working days of confirmation.</li>
       </ul>
       <h2>Security deposits</h2>
-      <p>Deposits are held and refunded by the PG owner according to your stay agreement and house rules after move-out. THIKANO can help resolve disputes through support.</p>
+      <p>Deposits are held and refunded by the PG owner according to your stay agreement and house rules after move-out. Habistat can help resolve disputes through support.</p>
       <h2>Bookings</h2>
       <p>If a booking is cancelled before move-in, any advance paid to the owner is refundable as per the owner’s stated policy on the property page. Bookings cancelled by the owner are refunded in full.</p>
       <h2>Service orders</h2>

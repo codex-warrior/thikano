@@ -40,7 +40,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <ShareButton slug={room.publicSlug} title={`${property.name} — Room ${room.number}`} summary={`${SHARING_LABEL[room.sharing]} · ${formatINR(room.rent)}/month · ${inv.availableBeds} beds available`} target={target} disabledReason={property.verification === 'verified' ? undefined : 'Sharing opens once THIKANO verifies this property'} />
+          <ShareButton slug={room.publicSlug} title={`${property.name} — Room ${room.number}`} summary={`${SHARING_LABEL[room.sharing]} · ${formatINR(room.rent)}/month · ${inv.availableBeds} beds available`} target={target} disabledReason={property.verification === 'verified' ? undefined : 'Sharing opens once Habistat verifies this property'} />
           {can(m, 'listings.publish', property.id) ? <ListButton target={target} roomNumber={room.number} intent={room.listingIntent} /> : null}
           {can(m, 'inventory.write', property.id) ? (
             <Link href={`/rooms/${room.id}/edit`} className={buttonClass('secondary', 'sm')}>
@@ -63,7 +63,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <Card className="p-5">
           <h2 className="text-[16px] font-bold">Beds</h2>
-          <p className="text-[12.5px] text-ink-500">Availability on THIKANO updates automatically from these beds.</p>
+          <p className="text-[12.5px] text-ink-500">Availability on Habistat updates automatically from these beds.</p>
           <div className="mt-2">
             <BedManager
               orgId={session.orgId}

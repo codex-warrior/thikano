@@ -1,4 +1,4 @@
-# THIKANO — Roadmap & Status
+# Habistat — Roadmap & Status
 
 _Last updated 2026-10-22. ✅ means built and verified by automated tests and/or a browser walkthrough against the Firebase emulators. Production launch dependencies are listed at the end._
 
@@ -11,7 +11,7 @@ _Last updated 2026-10-22. ✅ means built and verified by automated tests and/or
 | 4 | Owner OS: dashboard, residents, rent, payments, maintenance, notices, staff, vacancies | ✅ | Owner app; `functions/src/operations.ts` |
 | 5 | Discover + public pages: search, filters, room/property pages, OG, share links, live availability, sitemap, QR | ✅ | `apps/web`, mobile Discover |
 | 6 | Leads, visits, applications, approval, booking, move-in, resident activation, move-out | ✅ | `functions/src/marketplace.ts`; Owner `/leads` |
-| 7 | Resident: Home (THIKANO Daily), My Stay, rent, maintenance, notices, community, profile | ✅ | mobile Resident; `functions/src/resident.ts` |
+| 7 | Resident: Home (Habistat Daily), My Stay, rent, maintenance, notices, community, profile | ✅ | mobile Resident; `functions/src/resident.ts` |
 | 8 | Services: marketplace, provider abstraction, orders, Dwarpar adapter | ✅ (Dwarpar live mode needs credentials) | `functions/src/services.ts`, `functions/src/providers/` |
 | 9 | Partner economics: rules, splits, ledgers, earnings | ✅ | `packages/domain/src/economics.ts`, Owner `/earnings`, Admin `/revenue` |
 | 10 | Admin: verification, moderation, owners, students, leads, bookings, providers, transactions, revenue, support, audit | ✅ | `apps/admin`; `functions/src/platform.ts` |

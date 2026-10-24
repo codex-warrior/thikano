@@ -56,7 +56,7 @@ export const razorpayWebhook = onRequest({ secrets: [RAZORPAY_WEBHOOK_SECRET], c
   const r = await settle({ uid: 'razorpay', system: true }, p.orgId, p.invoiceId, amount, 'gateway', link.id, 'live', p.id);
   if (!r.duplicate) {
     await pending.docs[0]!.ref.update({ gatewayPaymentId: evt.payload.payment?.entity.id ?? null });
-    if (r.residentUid) await notifyUsers([r.residentUid], { kind: 'payment', title: 'Payment received ✓', body: `${formatINR(amount)} · Receipt ${r.receiptNo}`, link: 'thikano://stay' });
+    if (r.residentUid) await notifyUsers([r.residentUid], { kind: 'payment', title: 'Payment received ✓', body: `${formatINR(amount)} · Receipt ${r.receiptNo}`, link: 'habistat://stay' });
     await notifyOrg(p.orgId, r.propertyId, 'rent.read', { kind: 'payment', title: 'Rent received online', body: `${formatINR(amount)} · ${r.receiptNo}`, link: '/rent' });
   }
   res.status(200).send('ok');

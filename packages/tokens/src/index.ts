@@ -1,5 +1,5 @@
 /**
- * THIKANO design tokens — single source for web + mobile.
+ * Habistat design tokens — single source for web + mobile.
  * Web consumes these via CSS variables (packages/web-ui/styles/theme.css mirrors them);
  * mobile imports them directly. Change a value here and in theme.css together.
  */
@@ -16,8 +16,10 @@ export const color = {
     100: '#E4E9F3',
     50: '#F1F4F9',
   },
-  /** Marigold — used sparingly for brand moments, never for status. */
-  marigold: { 600: '#B9791A', 500: '#D99A2B', 100: '#FBF0DA' },
+  /** Brand blue (the logo's accent) — used sparingly for brand moments, never for status. */
+  accent: { 600: '#1D4ED8', 500: '#275DFC', 100: '#E7EEFF' },
+  /** Logo colours, exact. */
+  brand: { navy: '#011C5B', blue: '#275DFC' },
   ink: { 900: '#0D1730', 700: '#2D3850', 500: '#5A6479', 400: '#7D8597', 300: '#A9AFBC' },
   bg: '#F6F5F1',
   surface: '#FFFFFF',

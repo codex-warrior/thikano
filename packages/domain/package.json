@@ -2,7 +2,7 @@
   "name": "@thikano/domain",
   "version": "0.1.0",
   "private": true,
-  "description": "THIKANO business rules: inventory, listings, pipeline, rent, economics, permissions, search. Framework-free.",
+  "description": "Habistat business rules: inventory, listings, pipeline, rent, economics, permissions, search. Framework-free.",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

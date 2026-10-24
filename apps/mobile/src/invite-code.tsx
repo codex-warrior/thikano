@@ -25,7 +25,7 @@ export function InviteCodeCard() {
   }
   return (
     <Card style={{ gap: 10 }}>
-      <H2>I live in a THIKANO PG</H2>
+      <H2>I live in a Habistat PG</H2>
       <Body>Enter the invite code your PG shared with you.</Body>
       <Input label="Invite code" value={code} onChangeText={(v) => setCode(v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))} autoCapitalize="characters" autoCorrect={false} placeholder="ABCD2345" />
       {error ? <Text style={{ color: color.danger[600], fontWeight: '600' }}>{error}</Text> : null}

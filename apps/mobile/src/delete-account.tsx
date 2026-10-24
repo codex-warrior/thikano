@@ -31,7 +31,7 @@ export function DeleteAccount() {
       </Pressable>
       <Sheet visible={open} title="Delete your account?" onClose={() => setOpen(false)}>
         <Body>Your profile, devices and notifications are deleted. Enquiries you sent are anonymised. Rent receipts your PG must keep by law stay with the PG, without your name or number.</Body>
-        <Small>If you live in a THIKANO PG, your owner must complete your move-out first.</Small>
+        <Small>If you live in a Habistat PG, your owner must complete your move-out first.</Small>
         <Input label="Type DELETE to confirm" value={typed} onChangeText={setTyped} autoCapitalize="characters" />
         {error ? <Text style={{ color: color.danger[600], fontWeight: '600' }}>{error}</Text> : null}
         <Button label={busy ? 'Deleting…' : 'Delete account'} disabled={typed !== 'DELETE' || busy} onPress={remove} />

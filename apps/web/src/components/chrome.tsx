@@ -5,7 +5,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-canvas/90 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link href="/" aria-label="THIKANO home">
+        <Link href="/" aria-label="Habistat home">
           <Logo size="sm" />
         </Link>
         <a href="#get-app" className="text-[13px] font-semibold text-navy-700">
@@ -29,7 +29,7 @@ export function Footer() {
           <Link href="/contact" className="hover:text-white">Contact</Link>
           <Link href="/delete-account" className="hover:text-white">Delete account</Link>
         </nav>
-        <p className="mt-6 text-[12px] text-navy-300">© {new Date().getFullYear()} THIKANO. Room details are published by property owners and verified by THIKANO.</p>
+        <p className="mt-6 text-[12px] text-navy-300">© {new Date().getFullYear()} Habistat. Room details are published by property owners and verified by Habistat.</p>
       </div>
     </footer>
   );

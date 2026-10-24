@@ -164,7 +164,7 @@ export function LeadActions({ orgId, lead, booking, freeBeds, canWrite, canMoveI
                 </option>
               ))}
             </Select>
-            <p className="text-[12.5px] text-ink-500">The bed is reserved immediately — it disappears from availability on THIKANO.</p>
+            <p className="text-[12.5px] text-ink-500">The bed is reserved immediately — it disappears from availability on Habistat.</p>
             <FormError error={advance.error} />
             <Button type="submit" className="w-full" disabled={advance.busy}>
               Reserve bed
@@ -174,7 +174,7 @@ export function LeadActions({ orgId, lead, booking, freeBeds, canWrite, canMoveI
       ) : null}
       {dialog === 'movein' && invite !== undefined ? (
         <Dialog title={`${lead.name} moved in ✓`} onClose={() => (setDialog(null), setInvite(undefined))}>
-          {invite ? <InvitePanel name={lead.name} propertyName={propertyName} code={invite} /> : <p className="text-[14px] text-ink-700">Their THIKANO app is linked and now in Resident mode.</p>}
+          {invite ? <InvitePanel name={lead.name} propertyName={propertyName} code={invite} /> : <p className="text-[14px] text-ink-700">Their Habistat app is linked and now in Resident mode.</p>}
         </Dialog>
       ) : null}
       {dialog === 'movein' && invite === undefined ? (

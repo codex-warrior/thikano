@@ -7,9 +7,9 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakart
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'http://localhost:3000'),
-  title: { default: 'THIKANO — Find your PG. See the actual room.', template: '%s · THIKANO' },
+  title: { default: 'Habistat — Find your PG. See the actual room.', template: '%s · Habistat' },
   description: 'Find PGs and hostels near your college. See real rooms, real photos and live availability. Move in. Live better.',
-  openGraph: { siteName: 'THIKANO', locale: 'en_IN', type: 'website' },
+  openGraph: { siteName: 'Habistat', locale: 'en_IN', type: 'website' },
 };
 
 export const viewport: Viewport = { themeColor: '#0B1633', width: 'device-width', initialScale: 1 };

@@ -5,13 +5,22 @@ export function cx(...parts: (string | false | null | undefined)[]): string {
   return parts.filter(Boolean).join(' ');
 }
 
+/** The Habistat house mark (docs/brand/habistat-mark.svg). */
+export function LogoMark({ className, tone = 'dark' }: { className?: string; tone?: 'dark' | 'light' }) {
+  return (
+    <svg viewBox="0 0 375 342" className={className} aria-hidden="true">
+      <path fill={tone === 'light' ? '#FFFFFF' : '#011C5B'} d="M5 272V137Q5 99 40 82L170 14Q195 0 222 14L324 76Q338 86 325 94L157 186Q135 199 135 222V330Q135 337 128 337H70Q5 337 5 272Z" />
+      <path fill="#275DFC" d="M217 337V196Q217 178 235 170L318 135Q370 120 370 170V272Q370 337 305 337Z" />
+    </svg>
+  );
+}
+
 export function Logo({ tone = 'dark', size = 'md', suffix }: { tone?: 'dark' | 'light'; size?: 'sm' | 'md' | 'lg'; suffix?: string }) {
   const text = size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-base' : 'text-lg';
   return (
-    <span className={cx('inline-flex items-baseline gap-2 font-display font-extrabold tracking-[0.14em]', text, tone === 'light' ? 'text-white' : 'text-navy-800')}>
-      <span>
-        THIKANO<span className="text-marigold-500">.</span>
-      </span>
+    <span className={cx('inline-flex items-center gap-2 font-display font-extrabold tracking-[-0.01em]', text, tone === 'light' ? 'text-white' : 'text-brand-navy')}>
+      <LogoMark tone={tone} className="h-[1.15em] w-auto" />
+      <span>Habistat</span>
       {suffix ? <span className={cx('text-[0.62em] font-semibold tracking-[0.18em]', tone === 'light' ? 'text-navy-300' : 'text-ink-400')}>{suffix}</span> : null}
     </span>
   );
@@ -63,7 +72,7 @@ const TONES: Record<Tone, string> = {
   info: 'bg-info-100 text-info-600',
   navy: 'bg-navy-100 text-navy-700',
   neutral: 'bg-[#EEEDE8] text-ink-500',
-  brand: 'bg-marigold-100 text-marigold-600',
+  brand: 'bg-accent-100 text-accent-600',
 };
 
 export function StatusPill({ tone, children, dot = true }: { tone: Tone; children: ReactNode; dot?: boolean }) {

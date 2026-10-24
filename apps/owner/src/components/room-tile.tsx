@@ -34,7 +34,7 @@ export function RoomTile({ room, property, listingStatus, canPublish }: { room: 
               title={`${property.name} — Room ${room.number}`}
               summary={`${SHARING_LABEL[room.sharing]} · ${formatINR(room.rent)}/month · ${inv.availableBeds} bed${inv.availableBeds === 1 ? '' : 's'} available`}
               target={target}
-              disabledReason={verified ? undefined : 'Sharing opens once THIKANO verifies this property'}
+              disabledReason={verified ? undefined : 'Sharing opens once Habistat verifies this property'}
             />
             {canPublish && (inv.availableBeds > 0 || room.listingIntent === 'listed') ? (
               <ListButton target={target} roomNumber={room.number} intent={room.listingIntent} disabledReason={blocked ? 'This property cannot be listed right now' : undefined} />

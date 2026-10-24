@@ -58,7 +58,7 @@ export function ResidentActions({ orgId, residentId, name, status, freeBeds }: P
       ) : null}
       {dialog === 'moveout' ? (
         <Dialog title={`Complete move-out · ${name}`} onClose={close}>
-          <p className="text-[14px] text-ink-700">The bed becomes available immediately and listings update automatically. {name} keeps their THIKANO account to find their next PG.</p>
+          <p className="text-[14px] text-ink-700">The bed becomes available immediately and listings update automatically. {name} keeps their Habistat account to find their next PG.</p>
           <FormError error={out.error} />
           <div className="mt-5 flex justify-end gap-2">
             <Button variant="secondary" onClick={close}>

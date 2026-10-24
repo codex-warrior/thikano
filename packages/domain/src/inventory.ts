@@ -4,7 +4,7 @@ import type { Bed, BedStatus, Room, RoomInventory, RoomOccupancyStatus } from '.
 /**
  * INVENTORY — source of truth is the set of Bed documents.
  * Room.inventory is a derived cache produced by `deriveRoomInventory` and
- * written only by Cloud Functions (see docs/THIKANO-ROOM-INVENTORY.md).
+ * written only by Cloud Functions (see docs/HABISTAT-ROOM-INVENTORY.md).
  */
 
 type BedLike = Pick<Bed, 'status' | 'rentOverride' | 'moveOutDate'>;

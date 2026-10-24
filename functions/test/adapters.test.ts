@@ -20,14 +20,14 @@ describe('Razorpay payment links', () => {
 
   it('creates a link with basic auth and paise amount, returning the hosted URL', async () => {
     const calls: Call[] = [];
-    const gw = new RazorpayGateway('rzp_test_key', 'secret', 'https://thikano.in/payment/return', fakeFetch(200, { id: 'plink_123', short_url: 'https://rzp.io/i/abc', status: 'created' }, calls));
+    const gw = new RazorpayGateway('rzp_test_key', 'secret', 'https://habistat.com/payment/return', fakeFetch(200, { id: 'plink_123', short_url: 'https://rzp.io/i/abc', status: 'created' }, calls));
     const r = await gw.createIntent(input);
     expect(r).toEqual({ gatewayRef: 'plink_123', mode: 'live', status: 'pending', checkoutUrl: 'https://rzp.io/i/abc' });
     expect(calls[0]!.url).toBe('https://api.razorpay.com/v1/payment_links/');
     const headers = calls[0]!.init.headers as Record<string, string>;
     expect(headers.authorization).toBe(`Basic ${Buffer.from('rzp_test_key:secret').toString('base64')}`);
     const body = JSON.parse(String(calls[0]!.init.body));
-    expect(body).toMatchObject({ amount: 950000, currency: 'INR', reference_id: 'pay_abc123', callback_url: 'https://thikano.in/payment/return', callback_method: 'get', customer: { contact: '+919000000001', name: 'Rohit Singh' }, notify: { sms: false, email: false } });
+    expect(body).toMatchObject({ amount: 950000, currency: 'INR', reference_id: 'pay_abc123', callback_url: 'https://habistat.com/payment/return', callback_method: 'get', customer: { contact: '+919000000001', name: 'Rohit Singh' }, notify: { sms: false, email: false } });
     expect(body.expire_by).toBeGreaterThan(Date.now() / 1000 + 15 * 60);
   });
 

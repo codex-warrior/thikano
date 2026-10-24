@@ -24,7 +24,7 @@ const time = (ms: number) => new Intl.DateTimeFormat('en-IN', { hour: 'numeric',
 const day = (ms: number) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(ms);
 const ORDER_LABEL: Record<string, string> = { placed: 'placed', accepted: 'accepted', in_progress: 'being prepared', ready: 'ready for pickup', delivered: 'delivered' };
 
-/** THIKANO Daily — only real, useful items. No filler, no gamification. */
+/** Habistat Daily — only real, useful items. No filler, no gamification. */
 export default function ResidentHomeScreen() {
   const { data: h, error, loading, reload } = useResident();
   const [paying, setPaying] = useState(false);
@@ -45,7 +45,7 @@ export default function ResidentHomeScreen() {
   for (const o of h.orders.filter((x) => x.status !== 'delivered' && x.status !== 'cancelled' && x.status !== 'failed')) {
     feed.push({ key: o.id, icon: o.status === 'ready' ? 'package' : 'clock', tint: color.info[600], bg: color.info[100], title: `${o.category === 'laundry' ? 'Laundry' : o.items[0]?.name ?? 'Order'} ${ORDER_LABEL[o.status] ?? o.status}`, detail: o.providerName, at: o.updatedAt });
   }
-  for (const p of h.parcels) feed.push({ key: p.id, icon: 'box', tint: color.marigold[600], bg: color.marigold[100], title: 'Parcel arrived', detail: `${p.carrier} · at ${p.location}`, at: p.arrivedAt });
+  for (const p of h.parcels) feed.push({ key: p.id, icon: 'box', tint: color.accent[600], bg: color.accent[100], title: 'Parcel arrived', detail: `${p.carrier} · at ${p.location}`, at: p.arrivedAt });
   for (const n of h.notices.slice(0, 3)) {
     const when = n.startsAt ? `${day(n.startsAt)} ${time(n.startsAt)}${n.endsAt ? ` – ${time(n.endsAt)}` : ''}` : '';
     feed.push({ key: n.id, icon: 'volume-2', tint: color.warning[600], bg: color.warning[100], title: n.title, detail: [when, n.body].filter(Boolean).join(' · '), at: n.publishedAt });
@@ -114,7 +114,7 @@ export default function ResidentHomeScreen() {
           </Card>
         )}
 
-        <Eyebrow style={{ marginTop: 8 }}>Today at your THIKANO</Eyebrow>
+        <Eyebrow style={{ marginTop: 8 }}>Today at your PG</Eyebrow>
         {feed.length === 0 ? (
           <Card>
             <Body>All quiet today. Nothing needs you right now.</Body>

@@ -7,6 +7,50 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:780398725785:android:8b89c2261031c6eb88c608",
+        "android_client_info": {
+          "package_name": "com.habistat.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780398725785-qn466dhrg9lm2chh82lt2mu62jgjg8nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habistat.app",
+            "certificate_hash": "c327a4d285af0f03ec233642e7b63883c2c84ce0"
+          }
+        },
+        {
+          "client_id": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQgxHXAcRYFHD1r1rMVs8hFVqhnfW2JoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780398725785-a52lp1udgv03b4h2mqq9u2uev5o59mkd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "780398725785-gu0834vr76ublanu7kj3luvedr6uigch.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.habistat.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:780398725785:android:85b5cf92a26729ee88c608",
         "android_client_info": {
           "package_name": "in.thikano.app"
@@ -39,10 +83,10 @@
               "client_type": 3
             },
             {
-              "client_id": "780398725785-rvc6t7tn64ffoggv61br35qscsm6ic5n.apps.googleusercontent.com",
+              "client_id": "780398725785-gu0834vr76ublanu7kj3luvedr6uigch.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "in.thikano.app"
+                "bundle_id": "com.habistat.app"
               }
             }
           ]

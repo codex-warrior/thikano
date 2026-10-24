@@ -69,7 +69,7 @@ export default async function ReportsPage() {
         ) : null}
       </section>
       <section>
-        <SectionHeader title="Student demand" subtitle="From real THIKANO searches near your property" />
+        <SectionHeader title="Student demand" subtitle="From real Habistat searches near your property" />
         <InsightsCard orgId={session.orgId} propertyId={property.id} />
       </section>
     </div>

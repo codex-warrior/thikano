@@ -1,4 +1,4 @@
-# THIKANO — Services & Partner Economics
+# Habistat — Services & Partner Economics
 
 ## Provider abstraction
 
@@ -12,16 +12,16 @@ interface ServiceProvider {
 }
 ```
 
-Adapters live in `functions/src/providers/`: `MockProvider` (development and tests), `DwarparAdapter` (the first external provider), and future laundry, cleaning, grocery and pharmacy adapters. The resident only talks to THIKANO. Provider webhooks update `serviceOrders/{id}.status`, which fans out to the resident feed and to push notifications.
+Adapters live in `functions/src/providers/`: `MockProvider` (development and tests), `DwarparAdapter` (the first external provider), and future laundry, cleaning, grocery and pharmacy adapters. The resident only talks to Habistat. Provider webhooks update `serviceOrders/{id}.status`, which fans out to the resident feed and to push notifications.
 
 **Dwarpar status:** no API documentation or credentials exist in this repo yet. The adapter is a typed stub behind `providers/dwarpar.adapter = "mock" | "live"`, and running it live without credentials throws. It does not pretend to place real orders.
 
-## Revenue split: THIKANO Partner Share
+## Revenue split: Habistat Partner Share
 
 ```text
 Service Order → Gross
    ├─ Provider share
-   ├─ THIKANO share      (receives the rounding remainder, so the parts sum exactly to gross)
+   ├─ Habistat share      (receives the rounding remainder, so the parts sum exactly to gross)
    ├─ Property partner share
    └─ Other fees (gateway etc.)
 ```
@@ -36,7 +36,7 @@ All of this is implemented in `packages/domain/src/economics.ts` and tested in `
 ## Owner earnings view
 
 ```text
-THIKANO EARNINGS — October
+Habistat EARNINGS — October
 ₹17,850
 Food ₹8,400 · Laundry ₹4,200 · Cleaning ₹2,100 · Groceries ₹1,650 · Other ₹1,500
 ```

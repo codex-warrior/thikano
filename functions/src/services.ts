@@ -117,7 +117,7 @@ export const onServiceOrderWritten = onDocumentWritten('organizations/{orgId}/se
   const after = event.data?.after.data() as Order | undefined;
   if (!after || before?.status === after.status) return;
   const labels: Partial<Record<ServiceOrderStatus, string>> = { accepted: 'accepted', in_progress: 'being prepared', ready: 'ready', delivered: 'delivered ✓', cancelled: 'cancelled', failed: 'could not be completed' };
-  if (labels[after.status]) await notifyUsers([after.residentUid], { kind: 'service', title: `Your ${after.category} order is ${labels[after.status]}`, body: after.items.map((i) => `${i.qty}× ${i.name}`).join(', '), link: 'thikano://services' });
+  if (labels[after.status]) await notifyUsers([after.residentUid], { kind: 'service', title: `Your ${after.category} order is ${labels[after.status]}`, body: after.items.map((i) => `${i.qty}× ${i.name}`).join(', '), link: 'habistat://services' });
   if (after.status !== 'delivered') return;
 
   const rules = (await db.collection('revenueRules').where('active', '==', true).get()).docs.map((s) => s.data() as RevenueShareRule);
@@ -131,7 +131,7 @@ export const onServiceOrderWritten = onDocumentWritten('organizations/{orgId}/se
   await bump(['platform', `property_${after.propertyId}`], { serviceGmv: after.gross, thikanoRevenue: split.thikano, partnerEarnings: split.partner });
 });
 
-/** Owner earnings summary (partner share only — provider/THIKANO economics stay internal). */
+/** Owner earnings summary (partner share only — provider/Habistat economics stay internal). */
 export const getPartnerEarnings = onCall(async (req) => {
   const caller = requireAuth(req);
   const d = obj(req.data);

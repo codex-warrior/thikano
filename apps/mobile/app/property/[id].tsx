@@ -26,7 +26,7 @@ export default function PropertyScreen() {
   if (!data) {
     return (
       <Screen edges={[]}>
-        <EmptyState icon="alert-circle" title="This PG isn't available" body="It may no longer be listed on THIKANO." />
+        <EmptyState icon="alert-circle" title="This PG isn't available" body="It may no longer be listed on Habistat." />
       </Screen>
     );
   }
@@ -39,7 +39,7 @@ export default function PropertyScreen() {
         <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
           {p.rating ? (
             <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-              <Icon name="star" size={14} color={color.marigold[500]} />
+              <Icon name="star" size={14} color={color.accent[500]} />
               <Text style={{ fontWeight: '700' }}>{p.rating}</Text>
             </View>
           ) : null}

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>780398725785-gu0834vr76ublanu7kj3luvedr6uigch.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.780398725785-gu0834vr76ublanu7kj3luvedr6uigch</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>780398725785-4o7d0u26va17aggle7tgtq8vanfupogf.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD2d7SeEJ6rvCz5T86xOrmmtGY8OpbxCHU</string>
 	<key>GCM_SENDER_ID</key>
@@ -9,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>in.thikano.app</string>
+	<string>com.habistat.app</string>
 	<key>PROJECT_ID</key>
 	<string>thikano-prod</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:780398725785:ios:e70b9a656559b13a88c608</string>
+	<string>1:780398725785:ios:00235c741d10d73288c608</string>
 </dict>
 </plist>

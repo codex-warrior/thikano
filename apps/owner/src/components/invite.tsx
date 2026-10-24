@@ -5,10 +5,10 @@ import { Check, Copy, MessageCircle, RefreshCw } from 'lucide-react';
 import { buttonClass } from '@thikano/web-ui';
 import { useAction } from '@/lib/use-action';
 
-const APP_LINK = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://thikano.in';
+const APP_LINK = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://habistat.com';
 
 export function inviteMessage(name: string, propertyName: string, code: string) {
-  return `Hi ${name.split(' ')[0]}! You're now a resident at ${propertyName} on THIKANO — pay rent, raise requests and order food in the app.\n\n1. Get THIKANO: ${APP_LINK}\n2. Continue with Google\n3. Profile → "I live here" → code ${code}`;
+  return `Hi ${name.split(' ')[0]}! You're now a resident at ${propertyName} on Habistat — pay rent, raise requests and order food in the app.\n\n1. Get Habistat: ${APP_LINK}\n2. Continue with Google\n3. Profile → "I live here" → code ${code}`;
 }
 
 /** Invite code panel shown after assigning a resident who doesn't have a linked account yet. */
@@ -16,7 +16,7 @@ export function InvitePanel({ name, propertyName, code }: { name: string; proper
   const [copied, setCopied] = useState(false);
   return (
     <div className="rounded-xl border border-line bg-canvas p-4 text-center">
-      <p className="text-[13px] text-ink-500">Share this code so {name.split(' ')[0]} can link the THIKANO app:</p>
+      <p className="text-[13px] text-ink-500">Share this code so {name.split(' ')[0]} can link the Habistat app:</p>
       <p className="mt-2 font-mono text-[28px] font-bold tracking-[0.25em] text-navy-800">{code}</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <a className={buttonClass('success', 'sm')} href={`https://wa.me/?text=${encodeURIComponent(inviteMessage(name, propertyName, code))}`} target="_blank" rel="noreferrer">

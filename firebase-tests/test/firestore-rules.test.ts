@@ -1,7 +1,7 @@
 /**
- * THIKANO Firestore security rules — tenant isolation & role tests.
+ * Habistat Firestore security rules — tenant isolation & role tests.
  * Runs against the Firestore emulator (npm run test:firebase).
- * Requirements: docs/THIKANO-SECURITY.md §Required tests.
+ * Requirements: docs/HABISTAT-SECURITY.md §Required tests.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';

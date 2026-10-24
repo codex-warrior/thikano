@@ -171,7 +171,7 @@ export const setRoomListing = onCall(async (req) => {
   const property = propSnap.data() as Property;
   const room = roomSnap.data() as Room;
   if (intent === 'listed' && (property.verification === 'rejected' || property.verification === 'suspended')) {
-    fail('failed-precondition', 'This property cannot be listed right now. Please contact THIKANO support.');
+    fail('failed-precondition', 'This property cannot be listed right now. Please contact Habistat support.');
   }
   const batch = db.batch();
   batch.update(roomSnap.ref, { listingIntent: intent, updatedAt: Date.now() });

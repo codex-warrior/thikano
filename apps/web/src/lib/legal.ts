@@ -5,10 +5,10 @@
 export const LEGAL = {
   entityName: process.env.NEXT_PUBLIC_LEGAL_ENTITY ?? '[Registered company name]',
   address: process.env.NEXT_PUBLIC_LEGAL_ADDRESS ?? '[Registered office address]',
-  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? '[support@thikano.in]',
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? '[support@habistat.com]',
   supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE ?? '[Support phone]',
   grievanceOfficer: process.env.NEXT_PUBLIC_GRIEVANCE_OFFICER ?? '[Grievance Officer name]',
-  grievanceEmail: process.env.NEXT_PUBLIC_GRIEVANCE_EMAIL ?? '[grievance@thikano.in]',
+  grievanceEmail: process.env.NEXT_PUBLIC_GRIEVANCE_EMAIL ?? '[grievance@habistat.com]',
   effectiveDate: process.env.NEXT_PUBLIC_LEGAL_EFFECTIVE_DATE ?? '[Effective date]',
 };
 

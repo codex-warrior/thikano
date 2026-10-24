@@ -35,7 +35,7 @@ export const reviewProperty = onCall(async (req) => {
   await notifyOrg(orgId, propertyId, 'inventory.read', {
     kind: 'verification',
     title: decision === 'approve' ? `${p.name} is verified ✓` : decision === 'reject' ? `${p.name} was not approved` : `${p.name}: changes requested`,
-    body: decision === 'approve' ? 'Listed rooms are now visible to students on THIKANO.' : notes!,
+    body: decision === 'approve' ? 'Listed rooms are now visible to students on Habistat.' : notes!,
     link: '/properties',
   });
   return { verification: next };

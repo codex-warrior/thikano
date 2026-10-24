@@ -5,7 +5,7 @@ export interface NavItem {
   adminOnly?: boolean;
 }
 
-/** Admin navigation (docs/THIKANO-ADMIN.md). */
+/** Admin navigation (docs/HABISTAT-ADMIN.md). */
 export const NAV: { group?: string; items: NavItem[] }[] = [
   { items: [{ href: '/', label: 'Dashboard' }] },
   { group: 'Supply', items: [{ href: '/owners', label: 'Owners' }, { href: '/properties', label: 'Properties' }, { href: '/verification', label: 'Property Verification' }] },

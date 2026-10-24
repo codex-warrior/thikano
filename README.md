@@ -1,16 +1,16 @@
-# THIKANO
+# Habistat
 
 **The operating system for PGs & hostels.** Students discover real rooms, residents live better, and owners fill vacancies and earn more.
 
-Start with [docs/THIKANO-PRODUCT.md](docs/THIKANO-PRODUCT.md), [docs/THIKANO-ARCHITECTURE.md](docs/THIKANO-ARCHITECTURE.md) and [docs/THIKANO-ROADMAP.md](docs/THIKANO-ROADMAP.md). **Going live:** [docs/THIKANO-LAUNCH.md](docs/THIKANO-LAUNCH.md) (checklist, timeline, risks).
+Start with [docs/HABISTAT-PRODUCT.md](docs/HABISTAT-PRODUCT.md), [docs/HABISTAT-ARCHITECTURE.md](docs/HABISTAT-ARCHITECTURE.md) and [docs/HABISTAT-ROADMAP.md](docs/HABISTAT-ROADMAP.md). **Going live:** [docs/HABISTAT-LAUNCH.md](docs/HABISTAT-LAUNCH.md) (checklist, timeline, risks).
 
 ## Layout
 
 | Path | What |
 |---|---|
 | `apps/mobile` | Expo app: Discover mode (students) → Resident mode |
-| `apps/owner` | THIKANO Owner (Next.js), port 3001 |
-| `apps/admin` | THIKANO Admin (Next.js), port 3002 |
+| `apps/owner` | Habistat Owner (Next.js), port 3001 |
+| `apps/admin` | Habistat Admin (Next.js), port 3002 |
 | `apps/web` | Public pages `/pg/*`, `/room/*`, `/qr/*` (Next.js), port 3000 |
 | `functions` | Cloud Functions (callables, triggers, schedules, provider adapters) |
 | `packages/domain` | All business rules plus unit tests |

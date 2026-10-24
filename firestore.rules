@@ -1,7 +1,7 @@
 rules_version = '2';
 
-// THIKANO Firestore security rules.
-// Model: docs/THIKANO-SECURITY.md · Permission matrix mirrors packages/domain/src/permissions.ts.
+// Habistat Firestore security rules.
+// Model: docs/HABISTAT-SECURITY.md · Permission matrix mirrors packages/domain/src/permissions.ts.
 // Invariant fields (bed status, room inventory/stats, listings, money, leads, residents)
 // are written ONLY by Cloud Functions (Admin SDK bypasses these rules).
 

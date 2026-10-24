@@ -94,7 +94,7 @@ export default function Explore() {
                 <H2>{p.propertyName}</H2>
                 {p.rating ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                    <Icon name="star" size={13} color={color.marigold[500]} />
+                    <Icon name="star" size={13} color={color.accent[500]} />
                     <Text style={{ fontWeight: '700', color: color.ink[700] }}>{p.rating}</Text>
                   </View>
                 ) : null}

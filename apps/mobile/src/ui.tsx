@@ -69,7 +69,7 @@ export function Button({ label, onPress, variant = 'primary', icon, disabled, lo
 }
 
 export function Pill({ label, tone = 'available' }: { label: string; tone?: keyof typeof statusTokens | 'brand' }) {
-  const c = tone === 'brand' ? { fg: color.marigold[600], bg: color.marigold[100] } : statusTokens[tone];
+  const c = tone === 'brand' ? { fg: color.accent[600], bg: color.accent[100] } : statusTokens[tone];
   return (
     <View style={[s.pill, { backgroundColor: c.bg }]}>
       <View style={[s.dot, { backgroundColor: c.fg }]} />

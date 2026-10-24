@@ -6,7 +6,7 @@ import { ThikanoError, toFriendly } from '@thikano/client';
 import { firebase } from './firebase';
 
 /**
- * Call a THIKANO Cloud Function from a client component, then refresh server data.
+ * Call a Habistat Cloud Function from a client component, then refresh server data.
  * Errors are already human-readable (see @thikano/client friendlyMessage).
  */
 export function useAction<Req, Res = unknown>(name: string) {

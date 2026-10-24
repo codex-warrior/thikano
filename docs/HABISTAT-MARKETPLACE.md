@@ -1,8 +1,8 @@
-# THIKANO — Marketplace (Discover, public pages, leads, bookings)
+# Habistat — Marketplace (Discover, public pages, leads, bookings)
 
 ## Listing lifecycle
 
-Owner presses **List on THIKANO**, which sets `listingIntent = listed`. Nothing else is asked, because the room already has its rent, photos, amenities and availability. The effective status comes from `deriveListingStatus`:
+Owner presses **List on Habistat**, which sets `listingIntent = listed`. Nothing else is asked, because the room already has its rent, photos, amenities and availability. The effective status comes from `deriveListingStatus`:
 
 | Condition | Status | Public? | In search? |
 |---|---|---|---|
@@ -31,10 +31,10 @@ Ranking order: rooms with real availability first, then distance, media quality,
 
 ## Share links
 
-- Room: `thikano.in/room/<property>-room-<number>` (for example `sunrise-pg-room-204`)
-- Property: `thikano.in/pg/<property>-<locality>` (for example `sunrise-pg-kukas`)
+- Room: `habistat.com/room/<property>-room-<number>` (for example `sunrise-pg-room-204`)
+- Property: `habistat.com/pg/<property>-<locality>` (for example `sunrise-pg-kukas`)
 - Slug uniqueness is enforced through `slugs/{slug}`, with collisions suffixed `-2`, `-3`, and so on.
-- Pages are server-rendered (ISR, revalidated on projection change) and include Open Graph and Twitter tags, a generated 1200×630 OG image (room photo, rent, beds available, THIKANO mark), and JSON-LD (`LodgingBusiness` / `Accommodation` / `Offer`).
+- Pages are server-rendered (ISR, revalidated on projection change) and include Open Graph and Twitter tags, a generated 1200×630 OG image (room photo, rent, beds available, Habistat mark), and JSON-LD (`LodgingBusiness` / `Accommodation` / `Offer`).
 - Share options: native Web Share API, WhatsApp deep link (`https://wa.me/?text=`), and copy. QR codes (planned) encode the property URL with `?src=qr`.
 
 ## Lead capture (no app install)

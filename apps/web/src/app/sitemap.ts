@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllPublicSlugs } from '@thikano/server/public';
 
-const BASE = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://thikano.in';
+const BASE = process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? 'https://habistat.com';
 export const dynamic = 'force-dynamic';
 
 /** Only public, verified properties and published rooms are indexable. */

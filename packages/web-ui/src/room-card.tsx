@@ -33,7 +33,7 @@ const LISTING_PILL: Partial<Record<ListingStatus, { text: string; tone: Tone }>>
 };
 
 /**
- * The THIKANO room card — reused by Owner, Discover, public pages and Admin.
+ * The Habistat room card — reused by Owner, Discover, public pages and Admin.
  * `actions` renders the footer (View / Share / List) supplied by the host app.
  */
 export function RoomCard({ room, actions, href, className }: { room: RoomCardData; actions?: ReactNode; href?: string; className?: string }) {

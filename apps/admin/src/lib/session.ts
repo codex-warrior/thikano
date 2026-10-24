@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { platformContext, SESSION_COOKIE, verifySession, type PlatformSession } from '@thikano/server';
 
-/** Verified THIKANO staff session (platform role claim), or redirect. */
+/** Verified Habistat staff session (platform role claim), or redirect. */
 export const requirePlatform = cache(async (): Promise<PlatformSession> => {
   const decoded = await verifySession((await cookies()).get(SESSION_COOKIE)?.value);
   if (!decoded) redirect('/login');

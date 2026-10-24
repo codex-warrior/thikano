@@ -48,7 +48,7 @@ export function LoginForm({ devHint }: { devHint: boolean }) {
   return (
     <form onSubmit={submit} className="w-full max-w-sm" noValidate>
       <h1 className="text-[24px] font-bold">Sign in</h1>
-      <p className="mt-1 text-[14px] text-ink-500">Restricted to THIKANO platform staff. All access is audited.</p>
+      <p className="mt-1 text-[14px] text-ink-500">Restricted to Habistat platform staff. All access is audited.</p>
       <button type="button" onClick={google} disabled={busy} className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-line-strong bg-surface text-[15px] font-semibold text-ink-900 hover:bg-canvas disabled:opacity-60">
         <GoogleMark /> Continue with Google
       </button>

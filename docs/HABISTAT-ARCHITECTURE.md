@@ -1,4 +1,4 @@
-# THIKANO — Architecture
+# Habistat — Architecture
 
 _Status: Phases 0–11 implemented against the Firebase emulator suite · Last updated 2026-10-22_
 
@@ -11,9 +11,9 @@ The repository was **empty** at audit time, so every decision is greenfield. Too
 ```text
 apps/
   mobile/        Expo SDK 58 + Expo Router — ONE app: Discover (guest/student) → Resident
-  owner/         Next.js 16 — THIKANO Owner (owner.thikano.in)          :3001
-  admin/         Next.js 16 — THIKANO Admin (admin.thikano.in)          :3002
-  web/           Next.js 16 — public pages thikano.in/pg/*, /room/*, /qr/*  :3000
+  owner/         Next.js 16 — Habistat Owner (owner.habistat.com)          :3001
+  admin/         Next.js 16 — Habistat Admin (admin.habistat.com)          :3002
+  web/           Next.js 16 — public pages habistat.com/pg/*, /room/*, /qr/*  :3000
 packages/
   domain/        All business rules (pure TS) — inventory, listing, pipeline, rent, economics, permissions, search, projections
   tokens/        Design tokens (web + mobile)

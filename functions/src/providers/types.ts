@@ -1,7 +1,7 @@
 import type { Paise, ServiceCategory, ServiceOrderStatus } from '@thikano/domain';
 
 /**
- * THIKANO ↔ service provider contract. Business logic only ever talks to this
+ * Habistat ↔ service provider contract. Business logic only ever talks to this
  * interface; Dwarpar and every future provider is an adapter behind it.
  */
 export interface CatalogItem {
@@ -15,7 +15,7 @@ export interface CatalogItem {
 }
 
 export interface CreateOrderInput {
-  orderId: string; // THIKANO order id (idempotency key)
+  orderId: string; // Habistat order id (idempotency key)
   propertyId: string;
   deliverTo: { propertyName: string; locality: string; city: string; room: string; residentName: string; phone: string | null };
   items: { sku: string; qty: number }[];

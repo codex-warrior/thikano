@@ -1,5 +1,5 @@
 /**
- * THIKANO DEVELOPMENT DATASET — deterministic, never for production.
+ * Habistat DEVELOPMENT DATASET — deterministic, never for production.
  *
  * Sunrise PG: exactly 100 beds, 94 occupied, 6 vacant.
  * Five properties, 500+ beds, multiple owners, vacancies, leads, bookings,
@@ -50,7 +50,7 @@ declare const process: { env: Record<string, string | undefined> } | undefined;
 export function assertFixturesAllowed(): void {
   const env = typeof process !== 'undefined' ? process.env : {};
   if (env.THIKANO_ENV === 'production' || env.NEXT_PUBLIC_THIKANO_ENV === 'production') {
-    throw new Error('THIKANO fixtures must never be loaded in production.');
+    throw new Error('Habistat fixtures must never be loaded in production.');
   }
 }
 

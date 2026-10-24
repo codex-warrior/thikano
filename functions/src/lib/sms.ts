@@ -9,7 +9,7 @@ import { fail } from './errors';
  *  - Msg91SmsProvider: SMS_PROVIDER=msg91 — DLT-registered template via MSG91's flow API.
  *    ⚠ Endpoint + variable name are configurable because MSG91's API docs could not be
  *    verified when this was written — confirm them in the MSG91 panel at activation
- *    (docs/THIKANO-LAUNCH.md).
+ *    (docs/HABISTAT-LAUNCH.md).
  */
 export const OTP_HMAC_SECRET = defineSecret('OTP_HMAC_SECRET');
 export const MSG91_AUTH_KEY = defineSecret('MSG91_AUTH_KEY');
@@ -23,7 +23,7 @@ export interface SmsProvider {
 class EmulatorSmsProvider implements SmsProvider {
   readonly name = 'emulator';
   async sendOtp(to: string, code: string) {
-    logger.info(`[DEV SMS] to ${to}: ${code} is your THIKANO code`);
+    logger.info(`[DEV SMS] to ${to}: ${code} is your Habistat code`);
   }
 }
 

@@ -93,7 +93,7 @@ export function matchesFilters(room: PublicRoom, f: SearchFilters, distanceKm: n
 
 /**
  * Client/server-side filter + rank over a candidate set already narrowed by a
- * geohash range query (see docs/THIKANO-MARKETPLACE.md). Real availability first.
+ * geohash range query (see docs/HABISTAT-MARKETPLACE.md). Real availability first.
  */
 export function searchRooms(candidates: readonly PublicRoom[], f: SearchFilters, sort: SortKey = 'relevance'): SearchResult[] {
   const results: SearchResult[] = [];

@@ -8,7 +8,7 @@ import { requireProperty } from '@/lib/session';
 export const metadata = { title: 'Listings & Leads' };
 
 const STATUS_TONE: Record<LeadStatus, Tone> = { new: 'brand', contacted: 'info', visit_scheduled: 'info', interested: 'navy', applied: 'warn', approved: 'ok', rejected: 'bad', converted: 'ok', lost: 'neutral' };
-const SOURCE_LABEL: Record<LeadSource, string> = { room_share_link: 'Room link', property_share_link: 'Property link', discover: 'THIKANO search', qr: 'QR code', walk_in: 'Walk-in', other: 'Other' };
+const SOURCE_LABEL: Record<LeadSource, string> = { room_share_link: 'Room link', property_share_link: 'Property link', discover: 'Habistat search', qr: 'QR code', walk_in: 'Walk-in', other: 'Other' };
 const STAGE_LABEL: Partial<Record<BookingStage, string>> = { visit_requested: 'Visit requested', visit_scheduled: 'Visit scheduled', application: 'Application', owner_review: 'Reviewing', approved: 'Approved — book a bed', booked: 'Bed booked — ready to move in', moved_in: 'Moved in', rejected: 'Rejected', cancelled: 'Cancelled' };
 
 function ago(t: number) {

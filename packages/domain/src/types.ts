@@ -1,9 +1,9 @@
 import type { Paise } from './money';
 
 /**
- * Canonical THIKANO entity shapes. Timestamps are epoch milliseconds in the
+ * Canonical Habistat entity shapes. Timestamps are epoch milliseconds in the
  * domain layer; the Firebase layer converts to/from Firestore Timestamps.
- * See docs/THIKANO-DATABASE.md for where each entity lives in Firestore.
+ * See docs/HABISTAT-DATABASE.md for where each entity lives in Firestore.
  */
 export type ID = string;
 export type Millis = number;
@@ -321,7 +321,7 @@ export interface Resident extends Audited {
   propertyId: ID;
   roomId: ID;
   bedId: ID;
-  uid?: ID | null; // linked THIKANO account (null until invite accepted)
+  uid?: ID | null; // linked Habistat account (null until invite accepted)
   name: string;
   phone: string;
   status: 'invited' | 'active' | 'notice' | 'moved_out';

@@ -250,7 +250,7 @@ export const advanceBooking = onCall(async (req) => {
   });
   if (booking.studentUid && ['visit_scheduled', 'approved', 'rejected', 'booked'].includes(to)) {
     const label = { visit_scheduled: 'Your visit is scheduled', approved: 'Application approved 🎉', rejected: 'Application update', booked: 'Your bed is booked' }[to as 'approved'];
-    await notifyUsers([booking.studentUid], { kind: 'booking', title: label, body: `${booking.studentName}, check THIKANO for details.`, link: `/bookings/${bookingId}` });
+    await notifyUsers([booking.studentUid], { kind: 'booking', title: label, body: `${booking.studentName}, check Habistat for details.`, link: `/bookings/${bookingId}` });
   }
   return { ok: true };
 });
@@ -282,7 +282,7 @@ async function activateResident(i: ActivateInput) {
   // Link to an EXISTING account only (booking student, verified email, or phone account).
   let uid = await findExistingUid({ studentUid: i.booking?.booking.studentUid ?? null, email: i.email, phone: i.phone });
   if (uid && (await hasActiveStay(uid))) {
-    if (i.booking?.booking.studentUid === uid) fail('failed-precondition', 'This student already has an active stay on THIKANO.');
+    if (i.booking?.booking.studentUid === uid) fail('failed-precondition', 'This student already has an active stay on Habistat.');
     uid = null; // matched someone else's account by phone/email — fall back to an invite code
   }
 
@@ -333,7 +333,7 @@ async function activateResident(i: ActivateInput) {
 
   if (uid) {
     await setStayClaim(uid, { o: i.orgId, p: i.propertyId, r: result.residentId });
-    await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set in Room ${result.roomNumber}. Rent ${formatINR(result.rent)}/month.`, link: 'thikano://home' });
+    await notifyUsers([uid], { kind: 'system', title: 'Welcome home 🏠', body: `You're all set in Room ${result.roomNumber}. Rent ${formatINR(result.rent)}/month.`, link: 'habistat://home' });
     return { residentId: result.residentId, uid, inviteCode: null };
   }
   const inviteCode = await issueInvite(i.orgId, i.propertyId, result.residentId);

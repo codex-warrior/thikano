@@ -85,7 +85,7 @@ export function ListButton({ target, roomNumber, intent, disabledReason }: { tar
   if (intent === 'listed') {
     return (
       <>
-        <button onClick={() => setConfirming(true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-marigold-100 px-3 text-[13px] font-semibold text-marigold-600 hover:brightness-95" title="Manage listing">
+        <button onClick={() => setConfirming(true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent-100 px-3 text-[13px] font-semibold text-accent-600 hover:brightness-95" title="Manage listing">
           <Check size={14} /> Listed
         </button>
         {confirming ? (
@@ -114,7 +114,7 @@ export function ListButton({ target, roomNumber, intent, disabledReason }: { tar
   return (
     <>
       <Button size="sm" onClick={() => setConfirming(true)} disabled={!!disabledReason} title={disabledReason}>
-        <Rocket size={14} /> List on THIKANO
+        <Rocket size={14} /> List on Habistat
       </Button>
       {confirming ? (
         <Dialog onClose={() => setConfirming(false)} title={`List Room ${roomNumber}?`}>

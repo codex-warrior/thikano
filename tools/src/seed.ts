@@ -1,5 +1,5 @@
 /**
- * Seed the LOCAL EMULATORS with the THIKANO development dataset.
+ * Seed the LOCAL EMULATORS with the Habistat development dataset.
  *
  *   npm run emulators         (terminal 1)
  *   npm run seed              (terminal 2)
@@ -79,8 +79,8 @@ async function main() {
   for (const o of fx.OWNERS) await upsertUser(o.uid, { email: `${o.uid.replace('owner-', '')}@thikano.dev`, displayName: o.name });
   await upsertUser('mgr-ramesh', { email: 'ramesh@thikano.dev', displayName: 'Ramesh Saini' });
   await upsertUser('staff-suresh', { email: 'suresh@thikano.dev', displayName: 'Suresh (Maintenance)' });
-  await upsertUser(fx.DEMO.adminUid, { email: 'admin@thikano.dev', displayName: 'THIKANO Ops' }, { platformRole: 'platform_admin' });
-  await upsertUser('support-thikano', { email: 'support@thikano.dev', displayName: 'THIKANO Support' }, { platformRole: 'platform_support' });
+  await upsertUser(fx.DEMO.adminUid, { email: 'admin@thikano.dev', displayName: 'Habistat Ops' }, { platformRole: 'platform_admin' });
+  await upsertUser('support-thikano', { email: 'support@thikano.dev', displayName: 'Habistat Support' }, { platformRole: 'platform_support' });
   await upsertUser(fx.DEMO.residentUid, { phoneNumber: '+919000000001', displayName: 'Rohit Singh' }, { stay: { o: rohit.orgId, p: rohit.propertyId, r: rohit.id } });
   await w.set(`platformStaff/${fx.DEMO.adminUid}`, { uid: fx.DEMO.adminUid, role: 'platform_admin', updatedAt: t0 });
   await w.set(`platformStaff/support-thikano`, { uid: 'support-thikano', role: 'platform_support', updatedAt: t0 });

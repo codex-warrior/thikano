@@ -18,7 +18,7 @@ export default async function AdminDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-[26px] font-bold">Platform overview</h1>
-        <p className="mt-1 text-[14px] text-ink-500">THIKANO marketplace, residents and services — {month}.</p>
+        <p className="mt-1 text-[14px] text-ink-500">Habistat marketplace, residents and services — {month}.</p>
       </div>
 
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
         <StatTile label="Available beds (listed)" value={m.availableBeds} tone="ok" />
         <StatTile label="Bookings this month" value={m.bookingsThisMonth} hint={`${m.leadsThisMonth} leads`} />
         {m.serviceGmv != null ? <StatTile label="Service GMV" value={formatINR(m.serviceGmv, { compact: true })} hint="this month" /> : null}
-        {m.thikanoRevenue != null ? <StatTile label="THIKANO revenue" value={formatINR(m.thikanoRevenue, { compact: true })} hint="service share, this month" tone="ok" /> : null}
+        {m.thikanoRevenue != null ? <StatTile label="Habistat revenue" value={formatINR(m.thikanoRevenue, { compact: true })} hint="service share, this month" tone="ok" /> : null}
       </section>
 
       {m.pending ? (

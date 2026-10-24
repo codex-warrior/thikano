@@ -110,7 +110,7 @@ function IconBtn({ label, onClick, children, danger }: { label: string; onClick:
   );
 }
 
-/** Direct move-in (walk-in / existing resident). Creates the THIKANO account by phone. */
+/** Direct move-in (walk-in / existing resident). Creates the Habistat account by phone. */
 function AssignDialog({ orgId, propertyId, propertyName, bed, rent, deposit, onClose }: { orgId: string; propertyId: string; propertyName: string; bed: Bed; rent: number; deposit: number; onClose: () => void }) {
   const { run, busy, error, setError } = useAction<Record<string, unknown>, { residentId: string; uid: string | null; inviteCode: string | null }>('addResident');
   const [done, setDone] = useState<{ name: string; inviteCode: string | null } | null>(null);
@@ -120,7 +120,7 @@ function AssignDialog({ orgId, propertyId, propertyName, bed, rent, deposit, onC
         {done.inviteCode ? (
           <InvitePanel name={done.name} propertyName={propertyName} code={done.inviteCode} />
         ) : (
-          <p className="text-[14px] text-ink-700">{done.name}&apos;s THIKANO app is linked — they&apos;ll see their stay right away.</p>
+          <p className="text-[14px] text-ink-700">{done.name}&apos;s Habistat app is linked — they&apos;ll see their stay right away.</p>
         )}
         <Button className="mt-4 w-full" variant="secondary" onClick={onClose}>
           Done
@@ -146,7 +146,7 @@ function AssignDialog({ orgId, propertyId, propertyName, bed, rent, deposit, onC
       >
         <Field label="Resident name" name="name" required minLength={2} autoComplete="off" />
         <Field label="Mobile number" name="phone" type="tel" required placeholder="98XXXXXXXX" />
-        <Field label="Gmail address (optional)" name="email" type="email" placeholder="name@gmail.com" hint="Links their THIKANO app automatically when they sign in with Google." />
+        <Field label="Gmail address (optional)" name="email" type="email" placeholder="name@gmail.com" hint="Links their Habistat app automatically when they sign in with Google." />
         <div className="grid grid-cols-2 gap-3">
           <MoneyField label="Monthly rent" name="rent" defaultValue={rent / 100} />
           <MoneyField label="Deposit" name="deposit" defaultValue={deposit / 100} />

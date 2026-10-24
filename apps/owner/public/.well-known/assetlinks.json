@@ -3,7 +3,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.thikano.owner",
+      "package_name": "com.habistat.owner",
       "sha256_cert_fingerprints": ["4C:C5:1A:9D:25:90:86:6F:3B:BA:5B:EA:49:01:CA:C2:F2:47:6D:D3:9B:5B:A0:9F:87:E1:DA:03:E3:AC:B1:0E"]
     }
   }

@@ -18,9 +18,9 @@ export default async function Home() {
       <main>
         <section className="bg-navy-900 text-white">
           <div className="mx-auto max-w-5xl px-4 pb-14 pt-12 md:pt-20">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-marigold-500">For students</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent-500">For students</p>
             <h1 className="mt-3 max-w-2xl text-[36px] font-extrabold leading-[1.1] md:text-[52px]">Find your PG. See the actual room.</h1>
-            <p className="mt-4 max-w-xl text-[16px] text-navy-200">Real rooms, real photos, live availability — at PGs and hostels verified by THIKANO.</p>
+            <p className="mt-4 max-w-xl text-[16px] text-navy-200">Real rooms, real photos, live availability — at PGs and hostels verified by Habistat.</p>
             <div className="mt-8 grid max-w-xl gap-2 sm:grid-cols-2">
               <div className="flex h-12 items-center gap-2 rounded-xl bg-white px-4 text-[15px] text-ink-400">
                 <MapPin size={17} className="text-navy-700" /> Search area — e.g. Kukas
@@ -29,7 +29,7 @@ export default async function Home() {
                 <GraduationCap size={17} className="text-navy-700" /> Search college — e.g. JECRC
               </div>
             </div>
-            <p className="mt-3 text-[12.5px] text-navy-300">Search with filters and maps is in the THIKANO app.</p>
+            <p className="mt-3 text-[12.5px] text-navy-300">Search with filters and maps is in the Habistat app.</p>
           </div>
         </section>
 
@@ -46,7 +46,7 @@ export default async function Home() {
                       <h3 className="font-display text-[17px] font-bold">{p.propertyName}</h3>
                       {p.rating ? (
                         <span className="inline-flex items-center gap-1 text-[13px] font-semibold">
-                          <Star size={13} className="fill-marigold-500 text-marigold-500" /> {p.rating}
+                          <Star size={13} className="fill-accent-500 text-accent-500" /> {p.rating}
                         </span>
                       ) : null}
                     </div>

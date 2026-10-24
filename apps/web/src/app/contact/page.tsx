@@ -23,7 +23,7 @@ export default function Contact() {
         {LEGAL.address}
       </p>
       <h2>List your PG</h2>
-      <p>PG and hostel owners can write to {LEGAL.supportEmail} to get started with THIKANO Owner.</p>
+      <p>PG and hostel owners can write to {LEGAL.supportEmail} to get started with Habistat Owner.</p>
     </LegalPage>
   );
 }

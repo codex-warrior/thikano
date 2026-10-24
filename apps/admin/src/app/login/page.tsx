@@ -12,7 +12,7 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
         <div className="mb-8">
           <Logo suffix="ADMIN" />
         </div>
-        {denied ? <p className="mb-4 rounded-lg bg-bad-100 p-3 text-[13px] font-medium text-bad-600">This account does not have THIKANO staff access.</p> : null}
+        {denied ? <p className="mb-4 rounded-lg bg-bad-100 p-3 text-[13px] font-medium text-bad-600">This account does not have Habistat staff access.</p> : null}
         <Suspense>
           <LoginForm devHint={!!process.env.NEXT_PUBLIC_FIREBASE_EMULATOR_HOST} />
         </Suspense>

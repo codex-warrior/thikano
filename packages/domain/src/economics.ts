@@ -2,9 +2,9 @@ import type { Paise } from './money';
 import type { RevenueShareRule, ServiceCategory, ID } from './types';
 
 /**
- * THIKANO Partner Share — configurable revenue split per service order.
- * Gross → Provider share → THIKANO share → Property partner share → Other fees.
- * Splits are computed in integer paise; rounding remainder goes to THIKANO so
+ * Habistat Partner Share — configurable revenue split per service order.
+ * Gross → Provider share → Habistat share → Property partner share → Other fees.
+ * Splits are computed in integer paise; rounding remainder goes to Habistat so
  * the parts always sum exactly to gross.
  */
 

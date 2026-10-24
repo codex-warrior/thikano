@@ -2,7 +2,7 @@
   "name": "@thikano/functions",
   "version": "0.1.0",
   "private": true,
-  "description": "THIKANO Cloud Functions. Bundled with esbuild so @thikano/domain ships inside lib/.",
+  "description": "Habistat Cloud Functions. Bundled with esbuild so @thikano/domain ships inside lib/.",
   "main": "lib/index.js",
   "engines": { "node": "22" },
   "scripts": {

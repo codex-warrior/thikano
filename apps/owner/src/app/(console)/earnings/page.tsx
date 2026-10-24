@@ -19,9 +19,9 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[26px] font-bold">THIKANO Partner Share</h1>
+        <h1 className="text-[26px] font-bold">Habistat Partner Share</h1>
         <p className="mt-1 text-[14px] text-ink-500">
-          Your share of services your residents order through THIKANO · {label} ·{' '}
+          Your share of services your residents order through Habistat · {label} ·{' '}
           <a className="font-semibold text-navy-700" href={`/earnings?period=${prev}`}>
             previous month
           </a>
@@ -33,7 +33,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
         <StatTile label="Average per order" value={formatINR(e.orders ? Math.round(e.total / e.orders) : 0)} />
       </section>
       {e.total === 0 ? (
-        <EmptyState icon={<Sparkles size={20} />} title="No service earnings yet" body="When residents order food, laundry or cleaning in THIKANO, your share appears here automatically." />
+        <EmptyState icon={<Sparkles size={20} />} title="No service earnings yet" body="When residents order food, laundry or cleaning in Habistat, your share appears here automatically." />
       ) : (
         <Card className="divide-y divide-line">
           {Object.entries(e.byCategory)
@@ -46,7 +46,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
             ))}
         </Card>
       )}
-      <p className="text-[12.5px] text-ink-400">Shares differ by service and are set in your THIKANO partner agreement. Payouts are settled monthly.</p>
+      <p className="text-[12.5px] text-ink-400">Shares differ by service and are set in your Habistat partner agreement. Payouts are settled monthly.</p>
     </div>
   );
 }

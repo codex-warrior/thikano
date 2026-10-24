@@ -1,9 +1,9 @@
 /**
- * One-time: make someone the first THIKANO platform admin on a REAL project.
+ * One-time: make someone the first Habistat platform admin on a REAL project.
  * Later admins are granted from Admin → Settings (audited setPlatformRole function).
  *
  *   gcloud auth application-default login
- *   npx tsx tools/src/bootstrap-admin.ts --project thikano-prod --email founder@thikano.in --yes
+ *   npx tsx tools/src/bootstrap-admin.ts --project thikano-prod --email founder@habistat.com --yes
  *
  * Creates the user if missing and prints a password-reset link to set their password.
  */
@@ -35,7 +35,7 @@ async function main() {
   try {
     user = await auth.getUserByEmail(email!);
   } catch {
-    user = await auth.createUser({ email: email!, emailVerified: false, displayName: 'THIKANO Admin' });
+    user = await auth.createUser({ email: email!, emailVerified: false, displayName: 'Habistat Admin' });
     console.log(`Created user ${user.uid}`);
   }
   await auth.setCustomUserClaims(user.uid, { ...(user.customClaims ?? {}), platformRole: 'platform_admin' });

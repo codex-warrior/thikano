@@ -15,7 +15,7 @@ interface ProviderDoc {
 
 /**
  * Catalog-backed provider: items live in providers/{id}/catalog, orders are tracked
- * by THIKANO and advanced by the provider's partner console / status webhook.
+ * by Habistat and advanced by the provider's partner console / status webhook.
  * Used for partners without an API (local laundry, cleaning crews) and in development.
  */
 class CatalogProvider implements ServiceProvider {

@@ -65,5 +65,5 @@ export interface PlatformSession {
 export function platformContext(decoded: DecodedIdToken | null): PlatformSession | null {
   const role = decoded?.platformRole as PlatformRole | undefined;
   if (!decoded || (role !== 'platform_admin' && role !== 'platform_support')) return null;
-  return { uid: decoded.uid, name: (decoded.name as string) ?? decoded.email ?? 'THIKANO staff', role };
+  return { uid: decoded.uid, name: (decoded.name as string) ?? decoded.email ?? 'Habistat staff', role };
 }

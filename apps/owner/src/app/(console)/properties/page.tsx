@@ -10,11 +10,11 @@ export const metadata = { title: 'Properties' };
 
 const STATUS: Record<string, { label: string; tone: Tone; body: string }> = {
   draft: { label: 'Not submitted', tone: 'neutral', body: 'Add rooms, beds and photos, then submit for verification. Only verified properties appear to students.' },
-  submitted: { label: 'Under review', tone: 'warn', body: 'THIKANO is reviewing your property. This usually takes one working day.' },
-  changes_requested: { label: 'Changes requested', tone: 'warn', body: 'THIKANO asked for changes. Update the details and submit again.' },
-  verified: { label: 'Verified', tone: 'ok', body: 'Your listed rooms are visible to students on THIKANO.' },
-  rejected: { label: 'Not approved', tone: 'bad', body: 'Please contact THIKANO support.' },
-  suspended: { label: 'Suspended', tone: 'bad', body: 'Listings are hidden. Please contact THIKANO support.' },
+  submitted: { label: 'Under review', tone: 'warn', body: 'Habistat is reviewing your property. This usually takes one working day.' },
+  changes_requested: { label: 'Changes requested', tone: 'warn', body: 'Habistat asked for changes. Update the details and submit again.' },
+  verified: { label: 'Verified', tone: 'ok', body: 'Your listed rooms are visible to students on Habistat.' },
+  rejected: { label: 'Not approved', tone: 'bad', body: 'Please contact Habistat support.' },
+  suspended: { label: 'Suspended', tone: 'bad', body: 'Listings are hidden. Please contact Habistat support.' },
 };
 
 export default async function PropertiesPage() {

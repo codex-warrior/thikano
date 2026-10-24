@@ -36,7 +36,7 @@ for (const r of fx.rooms) docs.push([`slugs/${r.publicSlug}`, { kind: 'room', id
 for (const p of fx.properties) docs.push([`ratings/${p.id}`, { rating: fx.ratings[p.id] ?? null, count: fx.ratingCounts[p.id] ?? 0 }]);
 for (const pr of fx.publicRooms) docs.push([`publicRooms/${pr.roomId}`, pr]);
 // Day-to-day records for the demo PGs, so the demo owner account (Auth uid owner-shashank, created
-// separately — see docs/THIKANO-LAUNCH.md) sees a working PG. Every resident is unlinked; the first
+// separately — see docs/HABISTAT-LAUNCH.md) sees a working PG. Every resident is unlinked; the first
 // three active Sunrise residents get fixed invite codes so a tester can redeem one in the app and
 // see Resident mode. Each code works once; re-running resets them (and any edits to these records).
 const DEMO_STAYS = fx.residents.filter((r) => r.propertyId === fx.DEMO.propertyId && r.status === 'active').slice(0, 3);

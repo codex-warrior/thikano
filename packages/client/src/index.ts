@@ -74,7 +74,7 @@ export function thikano(): ThikanoClient {
 
 /**
  * Human-safe error. `message` is always presentable; the original error is kept for logs.
- * Callable errors from THIKANO functions already carry friendly messages.
+ * Callable errors from Habistat functions already carry friendly messages.
  */
 export class ThikanoError extends Error {
   readonly code: string;
@@ -111,7 +111,7 @@ export function friendlyMessage(code: string, serverMessage?: string): string {
     case 'auth/too-many-requests':
       return 'Too many attempts. Please wait a few minutes and try again.';
     case 'auth/user-disabled':
-      return 'This account has been disabled. Please contact THIKANO support.';
+      return 'This account has been disabled. Please contact Habistat support.';
     default:
       return GENERIC;
   }

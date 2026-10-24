@@ -24,7 +24,7 @@ test('owner lists a vacant room and availability follows bed assignment', async 
   await expect(page.getByRole('heading', { name: /Good (morning|afternoon|evening), Shashank/ })).toBeVisible();
 
   await page.goto('http://localhost:3001/rooms/prop-sunrise-r204');
-  await page.getByRole('button', { name: 'List on THIKANO' }).click();
+  await page.getByRole('button', { name: 'List on Habistat' }).click();
   await page.getByRole('button', { name: 'Publish' }).click();
   await expect(page.getByRole('button', { name: 'Listed' })).toBeVisible();
   await expect.poll(async () => (await publicRoom('prop-sunrise-r204'))?.fields.availableBeds?.integerValue, { timeout: 30_000 }).toBe('2');
@@ -68,7 +68,7 @@ test('public pages hide unlisted rooms and expose SEO metadata', async ({ page, 
 
 test('admin access is restricted; approving a property makes it public', async ({ page }) => {
   await signIn(page, 'http://localhost:3002', 'shashank@thikano.dev');
-  await expect(page.getByText('does not have THIKANO staff access')).toBeVisible();
+  await expect(page.getByText('does not have Habistat staff access')).toBeVisible();
   await page.context().clearCookies();
 
   await signIn(page, 'http://localhost:3002', 'admin@thikano.dev');

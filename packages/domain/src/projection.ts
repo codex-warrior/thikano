@@ -6,7 +6,7 @@ import type { GenderRule, GeoPoint, ID, Property, PropertyAmenity, Room } from '
 /**
  * PUBLIC PROJECTIONS — the only shapes that ever leave a tenant boundary.
  * Built here (pure) and written by Cloud Functions. Adding a field to the public
- * surface means adding it here, deliberately. See docs/THIKANO-SECURITY.md.
+ * surface means adding it here, deliberately. See docs/HABISTAT-SECURITY.md.
  */
 
 // ───────────── geohash (base32, no dependency) ─────────────

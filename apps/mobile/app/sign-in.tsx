@@ -40,7 +40,7 @@ export default function SignIn() {
 
   return (
     <Screen edges={[]}>
-      <H1>Sign in to THIKANO</H1>
+      <H1>Sign in to Habistat</H1>
       <Body>Save rooms, track enquiries, and manage your stay after you move in.</Body>
       <Pressable
         onPress={google}
@@ -57,7 +57,7 @@ export default function SignIn() {
           <Text style={{ color: color.navy[700], fontWeight: '600' }}>Use mobile number instead</Text>
         </Pressable>
       ) : null}
-      <Small style={{ textAlign: 'center', marginTop: 8 }}>By continuing you agree to THIKANO&apos;s Terms and Privacy Policy.</Small>
+      <Small style={{ textAlign: 'center', marginTop: 8 }}>By continuing you agree to Habistat&apos;s Terms and Privacy Policy.</Small>
     </Screen>
   );
 }

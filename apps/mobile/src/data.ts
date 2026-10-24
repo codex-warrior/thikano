@@ -5,7 +5,7 @@ import { firebase } from './firebase';
 /**
  * Discover reads ONLY the public projections (publicRooms / publicProperties).
  * Location search: geohash range queries around the point, then exact filtering and
- * ranking with @thikano/domain searchRooms (docs/THIKANO-MARKETPLACE.md).
+ * ranking with @thikano/domain searchRooms (docs/HABISTAT-MARKETPLACE.md).
  */
 export const PLACES: { label: string; kind: 'area' | 'college'; point: GeoPoint }[] = [
   { label: 'Kukas', kind: 'area', point: { lat: 27.0306, lng: 75.8896 } },

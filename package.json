@@ -2,7 +2,7 @@
   "name": "thikano",
   "private": true,
   "version": "0.1.0",
-  "description": "THIKANO \u2014 the operating system for PGs & hostels.",
+  "description": "Habistat \u2014 the operating system for PGs & hostels.",
   "workspaces": [
     "apps/*",
     "packages/*",

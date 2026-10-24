@@ -35,7 +35,7 @@ export default async function VacanciesPage() {
       <InsightsCard orgId={session.orgId} propertyId={property.id} />
 
       {property.verification !== 'verified' ? (
-        <Card className="border-warn-600/30 bg-warn-100/40 p-4 text-[13.5px]">Listed rooms become visible to students once THIKANO verifies {property.name}.</Card>
+        <Card className="border-warn-600/30 bg-warn-100/40 p-4 text-[13.5px]">Listed rooms become visible to students once Habistat verifies {property.name}.</Card>
       ) : null}
 
       {vacant.length === 0 ? (

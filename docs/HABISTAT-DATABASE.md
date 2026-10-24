@@ -1,4 +1,4 @@
-# THIKANO — Database (Firestore)
+# Habistat — Database (Firestore)
 
 _Final schema decision. Supersedes the conceptual tree in the master spec (§48)._
 
@@ -8,7 +8,7 @@ _Final schema decision. Supersedes the conceptual tree in the master spec (§48)
 2. **Inventory is flat under the property, not nested five levels deep.** `buildings`, `floors`, `rooms` and `beds` are sibling subcollections of a property and carry their parent IDs as fields. This makes "all vacant beds in this property" a single query, keeps rules simple, and avoids collection-group queries for owner screens. It also means a room can move to another floor without moving its document.
 3. **Public data lives in separate projection collections.** Firestore rules cannot hide individual fields, so anything public is copied into `publicProperties`/`publicRooms` by Cloud Functions, using an explicit whitelist of fields. Private documents are never publicly readable.
 4. **Money is integer paise; time is epoch milliseconds (numbers).** The same values flow unchanged through the domain package, the Admin SDK, the client SDK and React Native, with no Timestamp conversion layer. They are sortable and range-queryable, and the domain tests use the exact stored shape. (This revises the Phase 0 plan to use `Timestamp`s.)
-5. **Internal economics are admin-only.** `revenueRules` and the provider/THIKANO split are never readable by owners. Owners see only their own partner-share ledger entries.
+5. **Internal economics are admin-only.** `revenueRules` and the provider/Habistat split are never readable by owners. Owners see only their own partner-share ledger entries.
 
 ## Collections
 

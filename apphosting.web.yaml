@@ -13,7 +13,7 @@ env:
     value: "[Registered office address]"
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_SUPPORT_EMAIL
-    value: "[support@thikano.in]"
+    value: "[support@habistat.com]"
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_SUPPORT_PHONE
     value: "[Support phone]"
@@ -22,7 +22,7 @@ env:
     value: "[Grievance Officer name]"
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_GRIEVANCE_EMAIL
-    value: "[grievance@thikano.in]"
+    value: "[grievance@habistat.com]"
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_LEGAL_EFFECTIVE_DATE
     value: "[Effective date]"

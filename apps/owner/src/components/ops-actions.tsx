@@ -94,7 +94,7 @@ export function NewNoticeButton({ orgId, propertyId, uid, buildings }: { orgId: 
             <Button type="submit" className="w-full" disabled={m.busy}>
               {m.busy ? 'Publishing…' : 'Publish'}
             </Button>
-            <p className="text-[12px] text-ink-400">Residents get a notification and see it on their THIKANO home.</p>
+            <p className="text-[12px] text-ink-400">Residents get a notification and see it on their Habistat home.</p>
           </form>
         </Dialog>
       ) : null}

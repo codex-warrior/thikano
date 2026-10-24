@@ -1,5 +1,5 @@
 /**
- * THIKANO critical journeys (master spec §81–85) against the full emulator suite:
+ * Habistat critical journeys (master spec §81–85) against the full emulator suite:
  * Auth + Firestore + Cloud Functions (real triggers and callables).
  *
  *   npm run test:journeys   (root)

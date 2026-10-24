@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// THIKANO Storage rules. Media is served to the public through tokenized download
+// Habistat Storage rules. Media is served to the public through tokenized download
 // URLs stored in Firestore projections; direct reads stay private to the org.
 service firebase.storage {
   match /b/{bucket}/o {

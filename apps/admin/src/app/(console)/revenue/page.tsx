@@ -17,7 +17,7 @@ export default async function RevenuePage() {
       <PageHeader title="Revenue" subtitle={`Last ${ledger.length} delivered orders · splits computed once at delivery with the rule in effect`} />
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Service GMV" value={formatINR(t.gross, { compact: true })} />
-        <StatTile label="THIKANO share" value={formatINR(t.thikano, { compact: true })} tone="ok" hint={t.gross ? `${((t.thikano / t.gross) * 100).toFixed(1)}% take rate` : undefined} />
+        <StatTile label="Habistat share" value={formatINR(t.thikano, { compact: true })} tone="ok" hint={t.gross ? `${((t.thikano / t.gross) * 100).toFixed(1)}% take rate` : undefined} />
         <StatTile label="Partner (owner) share" value={formatINR(t.partner, { compact: true })} />
         <StatTile label="Provider share" value={formatINR(t.provider, { compact: true })} />
       </section>
@@ -30,7 +30,7 @@ export default async function RevenuePage() {
           { key: 'id', header: 'Rule', cell: (r) => <span className="font-mono text-[12.5px]">{r.id}</span> },
           { key: 'm', header: 'Applies to', cell: (r) => [r.match.category, r.match.providerId, r.match.orgId, r.match.propertyId].filter(Boolean).join(' · ') || 'Default (all)' },
           { key: 'p', header: 'Provider', align: 'right', cell: (r) => pct(r.providerBps) },
-          { key: 't', header: 'THIKANO', align: 'right', cell: (r) => pct(r.thikanoBps) },
+          { key: 't', header: 'Habistat', align: 'right', cell: (r) => pct(r.thikanoBps) },
           { key: 'pa', header: 'Partner', align: 'right', cell: (r) => pct(r.partnerBps) },
           { key: 'f', header: 'Fees', align: 'right', cell: (r) => pct(r.otherFeesBps) },
           { key: 's', header: 'Status', cell: (r) => <StatusPill tone={r.active ? 'ok' : 'neutral'}>{r.active ? 'Active' : 'Off'}</StatusPill> },

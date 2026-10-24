@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'sw
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', weight: ['500', '600', '700', '800'], display: 'swap' });
 
 export const metadata: Metadata = {
-  title: { default: 'THIKANO Admin', template: '%s · THIKANO Admin' },
+  title: { default: 'Habistat Admin', template: '%s · Habistat Admin' },
   robots: { index: false, follow: false },
 };
 
