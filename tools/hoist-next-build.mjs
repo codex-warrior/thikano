@@ -27,6 +27,8 @@ if (!existsSync(join(built, 'standalone'))) {
 }
 rmSync(target, { recursive: true, force: true });
 move(built, target);
+// The adapter copies <root>/public next to the server; the app's static files live in apps/<app>/public.
+if (existsSync(join(root, 'apps', app, 'public'))) cpSync(join(root, 'apps', app, 'public'), join(root, 'public'), { recursive: true });
 
 const standalone = join(target, 'standalone');
 const nested = join(standalone, 'apps', app);

@@ -29,6 +29,8 @@ adapter expects.
 
 Android APK (internal, EAS preview profile): built and verified 2026-10-24; signing key in `apps/mobile/credentials/` (gitignored, back it up).
 
+Owner app: the owner console is installable (web manifest) and wrapped as an Android TWA, `com.thikano.owner`, in `apps/owner-android/` (see `generate.js`). It is signed with the same upload key, verified by `apps/owner/public/.well-known/assetlinks.json`, so it opens full-screen. The APK is built locally to `dist/thikano-owner.apk` (gitignored). Console changes reach it without a rebuild. Verified on an Android 16 emulator 2026-10-24 (demo owner login, dashboard).
+
 ## Still to do
 
 | # | Who | Action |

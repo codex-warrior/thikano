@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
   title: { default: 'THIKANO Owner', template: '%s · THIKANO Owner' },
   description: 'Run your PG, fill vacant rooms, manage residents, and earn more.',
   robots: { index: false, follow: false },
+  appleWebApp: { capable: true, title: 'THIKANO Owner', statusBarStyle: 'black-translucent' },
 };
+
+export const viewport: Viewport = { themeColor: '#0B1633', width: 'device-width', initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
